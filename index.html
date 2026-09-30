@@ -12,6 +12,8 @@
   <link rel="stylesheet" href="css/map.css">
   <link rel="stylesheet" href="css/configurator.css">
   <link rel="stylesheet" href="css/cases.css">
+  <link rel="stylesheet" href="css/team-banner.css">
+  <link rel="stylesheet" href="css/footer.css">
   <script src="js/seoul-map.js" defer></script>
   <!-- S3 configurator: 데이터/검증/뷰/액션 분리, index.js가 연결 -->
   <script src="js/configurator/config.js" defer></script>
@@ -25,6 +27,9 @@
   <!-- S4 사례 갤러리: 데이터와 렌더/캐러셀 분리 -->
   <script src="js/cases/cases-data.js" defer></script>
   <script src="js/cases/cases.js" defer></script>
+  <!-- S5·S6 링크/사진 설정 -->
+  <script src="js/site/site-config.js" defer></script>
+  <script src="js/site/site-links.js" defer></script>
 </head>
 <body>
   <div class="page">
@@ -303,6 +308,36 @@
           </li>
         </template>
       </section>
+
+      <!-- S5. 팀 소개 배너 — 링크·사진 경로: js/site/site-config.js -->
+      <section class="team-banner-section" aria-labelledby="team-banner-title">
+        <div class="team-banner">
+          <img class="team-banner__photo" data-site-image="teamPhoto" alt="스밈 팀 단체 사진" hidden>
+          <div class="team-banner__content">
+            <h2 class="team-banner__title" id="team-banner-title">저희의 다른 활동들도<br>궁금하시다면</h2>
+            <a class="team-banner__cta" href="#" data-site-link="teamHomepage">스밈 팀 홈페이지 바로 가기</a>
+          </div>
+        </div>
+      </section>
+
+      <!-- S6. 푸터 — 링크: js/site/site-config.js -->
+      <footer class="site-footer" role="contentinfo">
+        <div class="site-footer__inner">
+          <div class="site-footer__contact">
+            <p class="site-footer__label">Contact</p>
+            <ul class="site-footer__list">
+              <li><a href="#" data-site-link="email">hana0115@g.seoultech.ac.kr</a></li>
+              <li><a href="#" data-site-link="instagram">Instagram</a></li>
+              <li><a href="#" data-site-link="x">X</a></li>
+              <li><a href="#" data-site-link="linkedin">LinkedIn</a></li>
+            </ul>
+          </div>
+          <ul class="site-footer__legal">
+            <li><a href="#" data-site-link="terms">Terms &amp; Conditions</a></li>
+            <li><a href="#" data-site-link="privacy">Privacy</a></li>
+          </ul>
+        </div>
+      </footer>
 
     </main>
 

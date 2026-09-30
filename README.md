@@ -24,15 +24,19 @@ css/
   map.css      S1. 서울 지도 + 파트너 로고 컨베이어
   configurator.css  S3. 맞춤 도안 만들기
   cases.css    S4. 사례 갤러리
+  team-banner.css  S5. 팀 소개 배너
+  footer.css   S6. 푸터
 js/
   seoul-map.js 지도 확대/축소·드래그, 마커 툴팁, 축척
   configurator/     S3 (아래 "맞춤 도안 configurator" 참고)
   cases/            S4 (cases-data.js: 카드 데이터, cases.js: 렌더 + 캐러셀)
+  site/             S5·S6 링크와 팀 사진 경로 (site-config.js) + 적용 스크립트
 assets/
   icons/       Hero 효과 카드 아이콘 (손그림, 투명 배경 원본)
   map/districts/  서울 25개 구 크레용 지도 (무손실 webp, 구별 레이어)
   partners/    파트너 로고 원본
   partners/trimmed/  여백을 잘라 높이 120px로 줄인 사용본
+  team/        S5 팀 사진 (team-photo.webp — 아직 없음)
 fonts/         웹폰트 파일 (Y Clover Bold, Y페어링체 Regular·Bold, Pretendard Regular·Medium·SemiBold·Bold — woff2)
 ```
 
@@ -45,8 +49,8 @@ fonts/         웹폰트 파일 (Y Clover Bold, Y페어링체 Regular·Bold, Pre
 | S2 | 파트너 로고 | S1에 포함 |
 | S3 | 맞춤 도안 컨피규레이터 | UI 완료 (STL 모듈 연결 대기) |
 | S4 | 사례 갤러리 (캐러셀) | 완료 (이미지·실제 문구 입력 필요) |
-| S5 | 팀 소개 배너 | 대기 |
-| S6 | 푸터 | 대기 |
+| S5 | 팀 소개 배너 | 완료 (팀 사진 파일 필요) |
+| S6 | 푸터 | 완료 (링크 주소 입력 필요) |
 
 ## 폰트
 
@@ -113,3 +117,12 @@ MossConfigurator.onChange((values, result) => { /* 필요하면 추가 연동 */
 - `image`를 비우면 같은 크기의 회색 자리가 표시된다. 이미지는 카드 틀(224×175)에 맞춰 잘려 보인다(`object-fit: cover`).
 - `link`가 있으면 카드 전체가 링크가 된다. `alt`(선택)가 없으면 `title`을 대체 텍스트로 쓴다.
 - 한 화면에 3장이 보이고, 좌우 버튼으로 한 장씩 순환한다. 3장 미만이면 버튼이 숨겨진다.
+
+## 링크·팀 사진 설정 (S5, S6)
+
+`js/site/site-config.js`의 `window.MOSS_SITE`만 고친다.
+
+- `links`: `teamHomepage`, `email`, `instagram`, `x`, `linkedin`, `terms`, `privacy`.
+  `#`이면 연결 전이다. `email`은 `mailto:`로 연결되고 화면 표시도 이 값을 따른다.
+  `http(s)://` 주소는 새 탭으로 열린다.
+- `images.teamPhoto`: S5 팀 사진 경로. 파일이 없거나 불러오지 못하면 사진 없이 배너만 보인다.

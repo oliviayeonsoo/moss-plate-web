@@ -1,0 +1,91 @@
+/* ==========================================================================
+   S5. 팀 소개 배너 — 회색 바탕 + 점선 격자 + 팀 사진 + 흰 헤드라인
+   다른 섹션보다 좌우 여백이 좁은(폭이 넓은) 러프 비율을 그대로 쓴다.
+   치수는 러프(1440 기준) 측정값.
+   ========================================================================== */
+
+.team-banner-section {
+  padding: 56px 45px 116px 48px;
+}
+
+.team-banner {
+  --banner-bg: #AAAAAA;
+  --banner-dot: #706E6B;
+  --grid-step: 38.1px;              /* 점선 격자 간격 */
+  --dot-step: 7.63px;               /* 점선 위 점 간격 */
+  --dot-r: 0.75px;
+
+  position: relative;
+  height: 391px;
+  overflow: hidden;
+  border-radius: 10px;
+  background-color: var(--banner-bg);
+  /* 세로 점선 + 가로 점선 (점 하나짜리 타일을 반복) */
+  background-image:
+    radial-gradient(circle, var(--banner-dot) var(--dot-r), transparent calc(var(--dot-r) + 0.5px)),
+    radial-gradient(circle, var(--banner-dot) var(--dot-r), transparent calc(var(--dot-r) + 0.5px));
+  background-size:
+    var(--grid-step) var(--dot-step),
+    var(--dot-step) var(--grid-step);
+  background-position:
+    1.45px 0.5px,
+    0.5px 0.45px;
+}
+
+/* 팀 사진: 배너 아래에 붙여 오른쪽으로 배치 (사진 파일 도착 후 위치 확정) */
+.team-banner__photo {
+  position: absolute;
+  left: 72px;
+  bottom: 0;
+  display: block;
+  height: 252px;
+  width: auto;
+  max-width: none;
+  pointer-events: none;
+  user-select: none;
+}
+
+.team-banner__photo[hidden] { display: none; }
+
+.team-banner__content {
+  position: absolute;
+  left: 42px;
+  top: 208px;
+  z-index: 1;
+}
+
+.team-banner__title {
+  font-family: var(--font-logo);
+  font-size: 35px;
+  font-weight: 700;
+  line-height: 48px;
+  letter-spacing: 0;
+  color: var(--color-white);
+  white-space: nowrap;
+}
+
+.team-banner__cta {
+  display: inline-grid;
+  place-items: center;
+  width: 151.4px;
+  height: 36.4px;
+  margin-top: 16px;
+  border-radius: 3px;
+  background: var(--color-white);
+  color: var(--color-cyan);
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0;
+  text-decoration: none;
+  transition: color var(--dur) var(--ease), background-color var(--dur) var(--ease);
+}
+
+.team-banner__cta:hover {
+  background: var(--color-cyan);
+  color: var(--color-white);
+}
+
+.team-banner__cta:focus-visible {
+  outline: 2px solid var(--color-white);
+  outline-offset: 3px;
+}
