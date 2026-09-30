@@ -116,6 +116,7 @@
 .map-tooltip[hidden] { display: none; }
 
 .map-tooltip__name {
+  font-family: var(--font-display);
   font-size: 16px;
   font-weight: 400;
   line-height: 1.2;

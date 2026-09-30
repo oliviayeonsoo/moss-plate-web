@@ -29,7 +29,7 @@ assets/
   map/districts/  서울 25개 구 크레용 지도 (무손실 webp, 구별 레이어)
   partners/    파트너 로고 원본
   partners/trimmed/  여백을 잘라 높이 120px로 줄인 사용본
-fonts/         웹폰트 파일 (Y Clover Bold, Y페어링체 Bold, Pretendard Regular·Medium·SemiBold·Bold — woff2)
+fonts/         웹폰트 파일 (Y Clover Bold, Y페어링체 Regular·Bold, Pretendard Regular·Medium·SemiBold·Bold — woff2)
 ```
 
 ## 섹션 진행 현황
