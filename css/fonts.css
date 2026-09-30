@@ -13,3 +13,12 @@
   font-style: normal;
   font-display: swap;
 }
+
+/* Y Clover Bold — 로고타입 전용 */
+@font-face {
+  font-family: "Y Clover";
+  src: url("../fonts/YClover-Bold.woff2") format("woff2");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}

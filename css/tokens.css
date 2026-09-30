@@ -25,7 +25,7 @@
      미확정 폰트는 아래 스택만 바꾸면 전체에 반영된다.
      설치된 폰트의 정확한 family 이름을 맨 앞에 두면 된다.            */
   /* Bold: 로고타입 */
-  --font-logo: "Y Clover", "YClover", "Y클로버", "Pretendard", sans-serif;
+  --font-logo: "Y Clover", "Y 클로버", "Pretendard", sans-serif;
   /* Bold: 부제, CTA, 효과 카드 문구, 섹션 헤드라인 */
   --font-display: "Y Pairing", "YPairingFont", "Y페어링체", "Pretendard", sans-serif;
   /* Regular: 소속 표기, 소개 문단, 라벨, 링크, 본문 전반 */
