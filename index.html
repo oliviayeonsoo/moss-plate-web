@@ -11,6 +11,7 @@
   <link rel="stylesheet" href="css/section.css">
   <link rel="stylesheet" href="css/map.css">
   <link rel="stylesheet" href="css/configurator.css">
+  <link rel="stylesheet" href="css/cases.css">
   <script src="js/seoul-map.js" defer></script>
   <!-- S3 configurator: 데이터/검증/뷰/액션 분리, index.js가 연결 -->
   <script src="js/configurator/config.js" defer></script>
@@ -21,6 +22,9 @@
   <script src="js/configurator/preview.js" defer></script>
   <script src="js/configurator/actions.js" defer></script>
   <script src="js/configurator/index.js" defer></script>
+  <!-- S4 사례 갤러리: 데이터와 렌더/캐러셀 분리 -->
+  <script src="js/cases/cases-data.js" defer></script>
+  <script src="js/cases/cases.js" defer></script>
 </head>
 <body>
   <div class="page">
@@ -269,6 +273,35 @@
           <button class="cfg-cta" type="submit" data-cfg-action>stl 파일 생성하기 &gt;</button>
           <p class="cfg-message" id="cfg-message" data-cfg-message role="status" aria-live="polite"></p>
         </form>
+      </section>
+
+      <!-- S4. 사례 갤러리 (캐러셀) — 카드 데이터: js/cases/cases-data.js -->
+      <section class="cases-section" aria-labelledby="cases-title">
+        <h2 class="section-title section-title--center" id="cases-title">
+          <span class="section-title__orange">우리가 함께 만든</span>
+          <span class="section-title__cyan">초록색 변화들</span>
+        </h2>
+
+        <div class="cases" data-cases aria-roledescription="carousel" aria-label="사례 갤러리">
+          <button class="cases__nav cases__nav--prev" type="button" data-cases-prev aria-label="이전 사례">
+            <svg viewBox="0 0 12 12" aria-hidden="true" focusable="false"><path d="M7.5 2 3.5 6l4 4"/></svg>
+          </button>
+          <div class="cases__viewport">
+            <ul class="cases__track" data-cases-track></ul>
+          </div>
+          <button class="cases__nav cases__nav--next" type="button" data-cases-next aria-label="다음 사례">
+            <svg viewBox="0 0 12 12" aria-hidden="true" focusable="false"><path d="M4.5 2l4 4-4 4"/></svg>
+          </button>
+        </div>
+
+        <!-- 카드 한 장의 마크업. JS가 데이터마다 복제해서 채운다 -->
+        <template data-case-template>
+          <li class="case-card">
+            <div class="case-card__media"></div>
+            <h3 class="case-card__title"></h3>
+            <p class="case-card__desc"></p>
+          </li>
+        </template>
       </section>
 
     </main>
