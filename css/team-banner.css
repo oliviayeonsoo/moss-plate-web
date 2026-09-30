@@ -32,20 +32,33 @@
     0.5px 0.45px;
 }
 
-/* 팀 사진: 배너 아래에 붙여 오른쪽으로 배치 (사진 파일 도착 후 위치 확정) */
+/* 팀 사진: 점선 격자 배경이 사진에 들어 있어서 배너 전체를 채운다 (폭 맞춤, 아래 정렬).
+   사진이 없거나 불러오지 못하면 위 CSS 점선 격자가 대신 보인다. */
 .team-banner__photo {
   position: absolute;
-  left: 72px;
-  bottom: 0;
+  inset: 0;
   display: block;
-  height: 252px;
-  width: auto;
-  max-width: none;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 50% 100%;
   pointer-events: none;
   user-select: none;
 }
 
 .team-banner__photo[hidden] { display: none; }
+
+/* 러프의 어두운 톤: 사진 위에 균일한 반투명 짙은 회색 (그라데이션 아님).
+   사진이 보일 때만 켠다. */
+.team-banner__shade {
+  position: absolute;
+  inset: 0;
+  display: none;
+  background: rgba(49, 49, 49, 0.36);
+  pointer-events: none;
+}
+
+.team-banner__photo:not([hidden]) + .team-banner__shade { display: block; }
 
 .team-banner__content {
   position: absolute;
