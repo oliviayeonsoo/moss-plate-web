@@ -1,10 +1,12 @@
 /* ==========================================================================
-   S3. 맞춤 도안 만들기 — configurator UI
-   좌표는 러프(1440 기준) 측정값, 패널 왼쪽 위 기준 px.
+   S3. 맞춤 도안 만들기 — 파라메트릭 3D 컨피규레이터 (임시 UI)
+   Figma 디자인이 오기 전까지의 얇은 스킨. 기존 사이트 토큰만 쓴다:
+   회색 패널 · 민트 입력 칩 · 주황 pill CTA · Pretendard.
+   로직은 js/configurator/ (core · viewer · ui · app.js).
    ========================================================================== */
 
 .cfg-section {
-  padding: 0;
+  padding: 0;                   /* 섹션 간격은 base.css 의 --section-gap */
 }
 
 .cfg-section .section-sub {
@@ -14,221 +16,181 @@
 
 /* ---- 패널 ------------------------------------------------------------- */
 .cfg-panel {
-  position: relative;
-  height: 420px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 216px;
+  grid-template-areas:
+    "view    side"
+    "stats   stats"
+    "fixed   fixed"
+    "general general"
+    "cta     cta";
+  column-gap: 24px;
   margin: 41px var(--content-pad-x) 0;
+  padding: 28px 28px 30px;
   border-radius: 26px;
   background: var(--color-gray-panel);
 }
 
-/* 패널 폭이 699→711px로 늘어난 만큼 내부 요소를 가운데로 옮긴다 */
-.cfg-panel > * {
+/* ---- 3D 뷰어 ---------------------------------------------------------- */
+.cfg-view {
+  grid-area: view;
+  position: relative;
+}
+
+.cfg-stage {
+  height: 300px;
+  overflow: hidden;
+  border-radius: 12px;
+  background: #F1F3F2;          /* viewer.js 의 scene 배경과 같은 색 */
+}
+
+.cfg-stage canvas { display: block; }
+
+.cfg-view__tools {
   position: absolute;
-  margin: 0 0 0 6px;
-}
-
-/* ---- 설치 가능 영역 + 세면대 도식 ------------------------------------- */
-.cfg-area {
-  left: 112.2px;
-  top: 107.5px;
-  width: 385.2px;
-  height: auto;
-  display: block;
-}
-
-/* ---- 치수선 ----------------------------------------------------------- */
-.cfg-dim svg {
-  display: block;
-  overflow: visible;
-  fill: none;
-  stroke: var(--color-cyan);
-  stroke-width: 2;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-}
-
-.cfg-dim--width-l  { left: 111.4px; top: 72px; }
-.cfg-dim--width-r  { left: 370.9px; top: 72px; }
-.cfg-dim--height-u { left: 60px;    top: 106.6px; }
-.cfg-dim--height-d { left: 60px;    top: 253.3px; }
-.cfg-dim--back     { left: 401.6px; top: 113px; }
-.cfg-dim--side     { left: 411.9px; top: 299.6px; }
-
-/* ---- 입력 칩 ---------------------------------------------------------- */
-.cfg-chip {
+  right: 10px;
+  bottom: 8px;
   display: flex;
-  align-items: baseline;
-  justify-content: center;
-  gap: 3px;
-  width: 90.6px;
-  height: 31.2px;
-  padding-top: 7px;
+  gap: 10px;
+}
+
+.cfg-textbtn {
+  padding: 2px 0;
+  border: 0;
+  background: none;
+  color: var(--color-ink-sub);
+  font: inherit;
+  font-size: 11px;
+  cursor: pointer;
+  text-underline-offset: 3px;
+}
+
+.cfg-textbtn:hover { color: var(--color-ink); text-decoration: underline; }
+.cfg-textbtn:focus-visible { outline: 2px solid var(--color-cyan); outline-offset: 2px; }
+
+/* ---- 입력 (FIELDS 자동 생성) ------------------------------------------ */
+.cfg-side { grid-area: side; }
+
+.cfg-fields {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.cfg-field {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  row-gap: 4px;
+}
+
+.cfg-field__label {
+  font-size: 12px;
+  color: var(--color-ink-sub);
+}
+
+.cfg-field__range {
+  font-size: 10px;
+  color: var(--color-ink-sub);
+  opacity: 0.7;
+  letter-spacing: 0;
+}
+
+.cfg-field__box {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  height: 31px;
+  padding: 0 10px;
   background: var(--color-cyan);
   color: var(--color-white);
-  cursor: text;
   transition: background-color var(--dur) var(--ease);
 }
 
-.cfg-chip--width { left: 265.3px; top: 64.3px; }
-.cfg-chip--back  { left: 433.7px; top: 113.9px; }
-.cfg-chip--side  { left: 506px;   top: 288.8px; }
-
-.cfg-chip__input {
-  width: 3.4em;              /* JS가 내용 길이에 맞춰 조정 */
-  min-width: 1.2em;
+.cfg-field__input {
+  flex: 1;
+  min-width: 0;
   padding: 0;
   border: 0;
   background: transparent;
   color: inherit;
-  font-family: var(--font-display);
-  font-size: 12.5px;
-  font-weight: 400;
-  line-height: 1.2;
-  letter-spacing: 0;
-  text-align: center;
-  caret-color: var(--color-white);
-}
-
-.cfg-chip__input::placeholder {
-  color: var(--color-white);
-  opacity: 1;
-}
-
-.cfg-chip__input:focus { outline: none; }
-.cfg-chip__input:focus::placeholder { opacity: 0.55; }
-
-.cfg-chip__unit {
-  font-size: 9.5px;
-  font-weight: 400;
-  line-height: 1;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 500;
   letter-spacing: 0;
 }
 
-/* 포커스: 칩 안쪽 흰 테두리 */
-.cfg-chip:focus-within {
-  box-shadow: inset 0 0 0 2px var(--color-white);
+.cfg-field__input:focus { outline: none; }
+.cfg-field__box:focus-within { box-shadow: inset 0 0 0 2px var(--color-white); }
+
+.cfg-field__unit {
+  margin-left: 6px;
+  font-size: 11px;
+  letter-spacing: 0;
 }
 
-/* 세로 칩: '(입력)'은 세로쓰기(한글은 바로 서고 괄호만 눕는다), cm는 가로 */
-.cfg-chip--vertical {
-  left: 52.8px;
-  top: 150.7px;
-  width: 30.4px;
-  height: 90.6px;
-  padding: 0;
-  flex-direction: column;
-  align-items: center;
-  justify-content: flex-start;
-  gap: 0;
+.cfg-field__msg {
+  grid-column: 1 / -1;
+  font-size: 11px;
+  line-height: 1.4;
 }
 
-.cfg-chip__rotate {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 30.4px;
-  height: 52px;
-  margin-top: 6px;
+.cfg-field__msg:empty { display: none; }
+
+.cfg-field[data-state="error"] .cfg-field__box { background: var(--color-orange); }
+.cfg-field[data-state="error"] .cfg-field__msg { color: var(--color-orange); }
+.cfg-field[data-state="error"] .cfg-field__msg::before { content: "막힘 · "; font-weight: 700; }
+.cfg-field[data-state="warn"]  .cfg-field__msg { color: var(--color-ink-sub); }
+.cfg-field[data-state="warn"]  .cfg-field__msg::before { content: "주의 · "; font-weight: 700; color: var(--color-orange); }
+
+/* ---- 결과 통계 -------------------------------------------------------- */
+.cfg-stats {
+  grid-area: stats;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px 16px;
+  margin: 20px 0 0;
+  transition: opacity var(--dur) var(--ease);
 }
 
-.cfg-chip__rotate .cfg-chip__input {
-  flex-shrink: 0;
-  width: 1.4em;
-  min-width: 0;
-  min-height: 1.2em;
-  writing-mode: vertical-rl;
-  text-orientation: mixed;
+.cfg-stats[data-stale] { opacity: 0.35; }
+
+.cfg-stat dt {
+  font-size: 11px;
+  color: var(--color-ink-sub);
 }
 
-.cfg-chip--vertical .cfg-chip__unit {
-  margin-top: -4px;
+.cfg-stat dd {
+  margin: 1px 0 0;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--color-ink);
+  letter-spacing: 0;
+  font-variant-numeric: tabular-nums;
 }
 
-/* 검증 실패: 칩을 주황으로 */
-.cfg-chip[data-invalid] {
-  background: var(--color-orange);
+.cfg-fixed {
+  grid-area: fixed;
+  margin-top: 12px;
+  font-size: 11px;
+  color: var(--color-ink-sub);
+  letter-spacing: 0;
 }
 
-/* ---- 안내/경고 -------------------------------------------------------- */
-.cfg-warn {
+.cfg-general {
+  grid-area: general;
+  margin-top: 8px;
+  font-size: 12px;
   color: var(--color-orange);
 }
 
-.cfg-warn--back { left: 531.6px; top: 114.8px; }
-.cfg-warn--side { left: 603px;   top: 289.6px; }
+.cfg-general:empty { display: none; }
 
-.cfg-warn__icon {
-  display: block;
-  width: 20px;
-  height: 18px;
-  margin-left: 1.7px;
-}
-
-.cfg-warn__icon path:first-child { fill: currentColor; }
-.cfg-warn__mark { fill: none; stroke: var(--color-white); stroke-width: 1.1; stroke-linecap: round; }
-.cfg-warn__dot  { fill: var(--color-white); }
-
-.cfg-warn__text {
-  margin-top: 5px;
-  font-size: 9px;
-  font-weight: 400;
-  line-height: 1.45;
-  letter-spacing: 0;
-  white-space: nowrap;
-}
-
-/* 해당 입력값이 규칙에 어긋나면 안내 문구를 강조 */
-.cfg-warn[data-active] .cfg-warn__text { font-weight: 700; }
-
-/* ---- 범례 ------------------------------------------------------------- */
-.cfg-legend {
-  left: 112.2px;
-  top: 296.4px;
-  display: flex;
-  align-items: center;
-  gap: 13px;
-  font-size: 13px;
-  font-weight: 400;
-  line-height: 22px;
-  color: var(--color-ink);
-}
-
-.cfg-legend__swatch {
-  position: relative;
-  flex-shrink: 0;
-  width: 22px;
-  height: 22px;
-  background: var(--color-white);
-}
-
-.cfg-legend__swatch::after {
-  content: "";
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  width: 4.2px;
-  height: 4.2px;
-  border-radius: 50%;
-  background: #EBEBEB;
-  transform: translate(-50%, -50%);
-}
-
-/* ---- 3D preview 자리 (외부 모듈 연결 전까지 숨김) ---------------------- */
-.cfg-preview {
-  left: 112.2px;
-  top: 107.5px;
-  width: 385.2px;
-  height: 176px;
-}
-
-.cfg-preview[hidden] { display: none; }
-
-/* ---- CTA -------------------------------------------------------------- */
+/* ---- CTA (STL 다운로드) ----------------------------------------------- */
 .cfg-cta {
-  left: 44.5px;
-  top: 351.2px;
-  width: 610px;
+  grid-area: cta;
   height: 36px;
+  margin-top: 18px;
   padding: 0;
   border: 0;
   border-radius: 18px;
@@ -251,31 +213,9 @@
   outline-offset: 3px;
 }
 
-.cfg-cta[aria-busy="true"] {
-  cursor: progress;
-  opacity: 0.7;
-}
-
-/* ---- 상태 메시지 (CTA 아래, 평소엔 비어 있음) ------------------------- */
-.cfg-message {
-  margin: 0;
-  left: 0;
-  right: 0;
-  top: 395px;
-  font-size: 11px;
-  line-height: 1.4;
-  text-align: center;
-  color: var(--color-orange);
-}
-
-.cfg-message[data-tone="info"] { color: var(--color-ink-sub); }
-
-/* ---- 유틸 ------------------------------------------------------------- */
-.sr-only {
-  position: absolute !important;
-  width: 1px;
-  height: 1px;
-  overflow: hidden;
-  clip: rect(0 0 0 0);
-  white-space: nowrap;
+.cfg-cta:disabled,
+.cfg-cta:disabled:hover {
+  background: #C4C4C4;
+  cursor: not-allowed;
+  transform: none;
 }

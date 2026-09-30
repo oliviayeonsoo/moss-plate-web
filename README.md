@@ -1,15 +1,20 @@
 # moss-plate-web
 
 이끼 플레이트 웹사이트. Figma 러프를 source of truth로 섹션별로 완성해 나간다.
-빌드 도구 없이 HTML/CSS만 사용한다. 기준 해상도는 1440px 데스크톱이다.
+빌드 도구 없이 HTML/CSS/JS만 사용한다. 기준 해상도는 1440px 데스크톱이다.
+의존성은 S3 3D 뷰어용 `three` 하나뿐이다 (번들러 없음, importmap으로 로컬 경로 연결).
 
 ## 실행
 
-`index.html`을 브라우저로 열면 된다. 로컬 서버를 쓰려면:
-
 ```bash
-python3 -m http.server 8080
+npm install                  # three 설치 (처음 한 번)
+python3 -m http.server 8080  # → http://localhost:8080
+npm test                     # S3 core 계산 검증 (브라우저 없이)
 ```
+
+S3 컨피규레이터가 ES 모듈이라 `index.html`을 파일로 직접 열면(file://) S3가 동작하지 않는다.
+나머지 섹션은 파일로 열어도 동작한다. 배포 시 `node_modules/three/build/three.module.js`와
+`node_modules/three/examples/jsm/controls/OrbitControls.js`가 같은 경로로 함께 올라가야 한다.
 
 ## 구조
 
@@ -28,7 +33,7 @@ css/
   footer.css   S6. 푸터
 js/
   seoul-map.js 지도 확대/축소·드래그, 마커 툴팁, 축척
-  configurator/     S3 (아래 "맞춤 도안 configurator" 참고)
+  configurator/     S3 파라메트릭 3D 컨피규레이터 (아래 참고)
   cases/            S4 (cases-data.js: 카드 데이터, cases.js: 렌더 + 캐러셀)
   site/             S5·S6 링크와 팀 사진 경로 (site-config.js) + 적용 스크립트
 assets/
@@ -47,7 +52,7 @@ fonts/         웹폰트 파일 (Y Clover Bold, Y페어링체 Regular·Bold, Pre
 | S0 | Hero (좌측 고정 패널) | 완료 |
 | S1 | 서울 지도 + 파트너 로고 컨베이어 | 완료 (기관 데이터 입력 필요) |
 | S2 | 파트너 로고 | S1에 포함 |
-| S3 | 맞춤 도안 컨피규레이터 | UI 완료 (STL 모듈 연결 대기) |
+| S3 | 맞춤 도안 컨피규레이터 | 3D 컨피규레이터 이식 완료 (Figma 디자인 대기) |
 | S4 | 사례 갤러리 (캐러셀) | 완료 (이미지·실제 문구 입력 필요) |
 | S5 | 팀 소개 배너 | 완료 |
 | S6 | 푸터 | 완료 (링크 주소 입력 필요) |
@@ -82,29 +87,27 @@ PC 설치 여부와 관계없이 같은 결과가 나온다. Pretendard Thin은 
 
 ## 맞춤 도안 configurator (S3)
 
-UI만 구현되어 있고 3D/STL 생성은 외부 모듈을 붙여서 쓴다.
+치수를 입력하면 3D 모델이 실시간으로 다시 만들어지고 STL로 내려받는다. 전부 브라우저에서 계산한다
+(서버·외부 API·외부 3D 서비스 없음). 원본: `이끼플레이트/configurator/`.
 
-| 파일 | 역할 |
-|---|---|
-| `js/configurator/config.js` | 입력 필드와 검증 규칙 (데이터) |
-| `js/configurator/store.js` | 입력값 상태 (`{ width, height, backGap, sideGap }`, cm, 미입력은 `null`) |
-| `js/configurator/validate.js` | 검증 순수 함수 → `{ valid, errors }` |
-| `js/configurator/inputs.js` | 입력 칩 ↔ state 연결 |
-| `js/configurator/feedback.js` | 검증 결과 표시 |
-| `js/configurator/preview.js` | 3D preview 자리 (adapter를 받으면 표시) |
-| `js/configurator/actions.js` | `stl 파일 생성하기` 버튼 |
-| `js/configurator/index.js` | 위 모듈 연결 + 공개 API `window.MossConfigurator` |
-
-STL 모듈 연결 예시 (`index.js` 뒤에 로드되는 새 스크립트):
-
-```js
-MossConfigurator.setPreview({
-  mount(el) { /* el에 three.js 캔버스 등을 붙인다 */ },
-  update(values, result) { if (result.valid) rebuildMesh(values); }
-});
-MossConfigurator.onGenerate(values => exportStl(values)); // Promise면 끝날 때까지 버튼 busy
-MossConfigurator.onChange((values, result) => { /* 필요하면 추가 연동 */ });
 ```
+js/configurator/
+  core/      순수 계산 (DOM·Three.js 무의존). 원본과 바이트 단위로 동일 — 수정 금지
+    params.js    FIELDS · LIMITS · DEFAULTS · FIXED · 파생 규칙(derive)
+    validate.js  errors = 생성·다운로드 차단, warnings = 표시만
+    profile.js / triangulate.js / geometry.js   윤곽 → 삼각분할 → 메시
+    stl.js       binary STL 인코딩 + downloadSTL
+  viewer/viewer.js   Three.js 렌더링. 원본에서 dispose(렌더 루프·ResizeObserver·GPU 자원·캔버스 정리)만 보강
+  ui/controls.js     입력 폼 — FIELDS/LIMITS 를 읽어 자동 생성 (Figma 디자인 교체 지점)
+  ui/stats.js        결과 통계 표시
+  app.js             배선: 입력 → validate → buildMesh → viewer.update / stats / 다운로드
+```
+
+- 입력 항목을 추가/제거하려면 `core/params.js`의 `FIELDS`/`LIMITS`만 고친다. UI는 자동으로 따라간다.
+- 디자인 교체는 `ui/`와 `css/configurator.css`만 건드린다. `controls.js` 계약:
+  `createControls(root, initialValues, onChange)` → `{ values, applyValidation(result), set(patch) }`.
+- 입력은 requestAnimationFrame으로 묶어 한 프레임에 한 번만 재생성한다.
+- 뷰어는 S3가 화면 근처에 올 때 mount하고, `pagehide`에서 dispose한다.
 
 ## 사례 갤러리 카드 추가/수정 (S4)
 
