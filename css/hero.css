@@ -3,12 +3,41 @@
    ========================================================================== */
 
 .hero {
+  /* 글자·CTA 크기 — 현재 조정안 (기본값) */
+  --hero-eyebrow: 12px;
+  --hero-tagline: 18px;
+  --hero-logo: 50px;
+  --hero-desc: 13px;
+  --hero-desc-lh: 1.72;
+  --hero-label: 12px;
+  --hero-card-sm: 12px;
+  --hero-card-lg: 15px;
+  --hero-icon: 48px;
+  --hero-cta-h: 48px;
+  --hero-cta-fs: 14px;
+  --hero-link: 14.5px;
+
   position: sticky;
   top: 0;
   align-self: start;
   height: 100vh;
   overflow-y: auto;
   background: var(--color-mint-bg);
+}
+
+/* 비교용 임시 스위치: <header class="hero" data-scale="rough">
+   러프를 1440으로 환산한 원래 크기. 조정안/원비율 결정 후 한쪽을 지운다. */
+.hero[data-scale="rough"] {
+  --hero-eyebrow: 10px;
+  --hero-tagline: 16.5px;
+  --hero-desc: 11.5px;
+  --hero-desc-lh: 1.4;
+  --hero-label: 11.5px;
+  --hero-card-sm: 10px;
+  --hero-card-lg: 12px;
+  --hero-icon: 46px;
+  --hero-cta-h: 36px;
+  --hero-cta-fs: 12px;
 }
 
 .hero__inner {
@@ -18,7 +47,7 @@
 
 /* ---- 상단 소속 표기 ---------------------------------------------------- */
 .hero__eyebrow {
-  font-size: 12px;
+  font-size: var(--hero-eyebrow);
   font-weight: 500;
   line-height: 1.4;
   color: var(--color-cyan-text);
@@ -26,17 +55,17 @@
 
 /* ---- 부제 + 로고타입 --------------------------------------------------- */
 .hero__tagline {
-  margin-top: 58px;
-  font-size: 18px;
+  margin-top: 62px;
+  font-size: var(--hero-tagline);
   font-weight: 700;
   line-height: 1.4;
   color: var(--color-cyan);
 }
 
 .hero__logo {
-  margin-top: 10px;
+  margin-top: 8px;
   font-family: var(--font-logo);
-  font-size: 56px;
+  font-size: var(--hero-logo);
   font-weight: 400;
   line-height: 1.1;
   letter-spacing: 0;
@@ -48,20 +77,20 @@
 
 /* ---- 소개 문단 --------------------------------------------------------- */
 .hero__desc {
-  margin-top: 28px;
-  font-size: 13px;
+  margin-top: 30px;
+  font-size: var(--hero-desc);
   font-weight: 400;
-  line-height: 1.75;
+  line-height: var(--hero-desc-lh);
   color: var(--color-ink-sub);
 }
 
 /* ---- 효과 수치 --------------------------------------------------------- */
 .hero__impact {
-  margin-top: 60px;
+  margin-top: 62px;
 }
 
 .hero__impact-label {
-  font-size: 12px;
+  font-size: var(--hero-label);
   font-weight: 500;
   line-height: 1.4;
   color: var(--color-cyan-text);
@@ -71,34 +100,52 @@
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 12px;
-  margin-top: 12px;
+  margin-top: 13px;
 }
 
 .impact-card {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  gap: 2px;
-  height: 134px;
-  padding: 16px 8px;
+  min-height: 134px;
+  padding: 14px 8px 20px;
   background: var(--color-white);
   border-radius: var(--radius-xs);
   text-align: center;
 }
 
+.impact-card__icon {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  justify-content: center;
+  padding-bottom: 8px;
+}
+
+.impact-card__icon img {
+  display: block;
+  width: auto;
+  height: var(--hero-icon);
+}
+
+.impact-card__text {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
 .impact-card__lead,
 .impact-card__tail {
-  font-size: 12px;
+  font-size: var(--hero-card-sm);
   font-weight: 500;
-  line-height: 1.45;
+  line-height: 1.35;
   color: var(--color-ink-sub);
 }
 
 .impact-card__value {
-  font-size: 15px;
+  font-size: var(--hero-card-lg);
   font-weight: 700;
-  line-height: 1.45;
+  line-height: 1.35;
   color: var(--color-ink);
   font-variant-numeric: tabular-nums;
 }
@@ -109,12 +156,12 @@
   align-items: center;
   justify-content: center;
   width: 100%;
-  height: 48px;
-  margin-top: 20px;
+  height: var(--hero-cta-h);
+  margin-top: 21px;
   background: var(--color-orange);
   border-radius: var(--radius-xs);
   color: var(--color-white);
-  font-size: 14px;
+  font-size: var(--hero-cta-fs);
   font-weight: 700;
   text-decoration: none;
   transition: background-color var(--dur) var(--ease),
@@ -133,11 +180,11 @@
 .hero__links {
   display: flex;
   gap: 16px;
-  margin-top: 22px;
+  margin-top: 18px;
 }
 
 .hero__links a {
-  font-size: 14px;
+  font-size: var(--hero-link);
   font-weight: 400;
   line-height: 1.4;
   letter-spacing: 0;
