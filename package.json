@@ -2,12 +2,12 @@
   "name": "moss-plate-web",
   "private": true,
   "type": "module",
-  "description": "이끼 플레이트 웹사이트 (정적 HTML/CSS/JS). S3 컨피규레이터만 ES 모듈 + three 사용",
+  "description": "이끼 플레이트 웹사이트 (정적 HTML/CSS/JS). S3 3피스 도안 생성은 manifold-3d(WASM)로 브라우저에서 계산",
   "scripts": {
-    "test": "node test/core.test.mjs",
+    "test": "node test/engine.test.mjs",
     "serve": "python3 -m http.server 8080"
   },
   "dependencies": {
-    "three": "0.161.0"
+    "manifold-3d": "3.5.4"
   }
 }

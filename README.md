@@ -2,26 +2,26 @@
 
 이끼 플레이트 웹사이트. Figma 러프를 source of truth로 섹션별로 완성해 나간다.
 빌드 도구 없이 HTML/CSS/JS만 사용한다. 기준 해상도는 1440px 데스크톱이다.
-의존성은 S3 3D 뷰어용 `three` 하나뿐이다 (번들러 없음, importmap으로 로컬 경로 연결).
+의존성은 S3 도안 생성 엔진용 `manifold-3d@3.5.4` 하나뿐이다 (번들러 없음, importmap으로 로컬 경로 연결).
 
 ## 실행
 
 ```bash
-npm install                  # three 설치 (처음 한 번)
+npm install                  # manifold-3d 설치 (처음 한 번)
 python3 -m http.server 8080  # → http://localhost:8080
-npm test                     # S3 core 계산 검증 (브라우저 없이)
+npm test                     # S3 엔진 검증 (브라우저 없이)
 ```
 
-S3 컨피규레이터가 ES 모듈이라 `index.html`을 파일로 직접 열면(file://) S3가 동작하지 않는다.
-나머지 섹션은 파일로 열어도 동작한다. 배포 시 `node_modules/three/build/three.module.js`와
-`node_modules/three/examples/jsm/controls/OrbitControls.js`가 같은 경로로 함께 올라가야 한다.
+S3가 ES 모듈 + WASM이라 `index.html`을 파일로 직접 열면(file://) S3가 동작하지 않는다.
+나머지 섹션은 파일로 열어도 동작한다. 배포 시 `node_modules/manifold-3d/manifold.js`와
+`manifold.wasm`이 같은 경로로 함께 올라가야 한다 (Pages 워크플로가 자동으로 넣는다).
 
 ## 배포 (GitHub Pages)
 
 주소: https://oliviayeonsoo.github.io/moss-plate-web/
 
 `main`에 푸시하면 `.github/workflows/pages.yml`이 자동으로 배포한다.
-three 설치(`npm ci`) → core 테스트(`npm test`) → 사이트 파일과 three 파일 2개를 모아 Pages에 올린다.
+manifold-3d 설치(`npm ci`) → 엔진 테스트(`npm test`) → 사이트 파일과 manifold 파일 2개를 모아 Pages에 올린다.
 테스트가 실패하면 배포하지 않는다. 처음 한 번은 저장소 Settings → Pages → Source를 **GitHub Actions**로 설정해야 한다.
 
 ## 구조
@@ -41,7 +41,8 @@ css/
   footer.css   S6. 푸터
 js/
   seoul-map.js 지도 확대/축소·드래그, 마커 툴팁, 축척
-  configurator/     S3 파라메트릭 3D 컨피규레이터 (아래 참고)
+  lib/moss/moss-engine.js  S3 도안 생성 엔진 (원본 번들 그대로, 수정 금지)
+  configurator/app.js      S3 화면 ↔ 엔진 연결
   cases/            S4 (cases-data.js: 카드 데이터, cases.js: 렌더 + 캐러셀)
   site/             S5·S6 링크와 팀 사진 경로 (site-config.js) + 적용 스크립트
 assets/
@@ -60,7 +61,7 @@ fonts/         웹폰트 파일 (Y Clover Bold, Y페어링체 Regular·Bold, Pre
 | S0 | Hero (좌측 고정 패널) | 완료 |
 | S1 | 서울 지도 + 파트너 로고 컨베이어 | 완료 (기관 데이터 입력 필요) |
 | S2 | 파트너 로고 | S1에 포함 |
-| S3 | 맞춤 도안 컨피규레이터 | 3D 컨피규레이터 이식 완료 (Figma 디자인 대기) |
+| S3 | 맞춤 도안 만들기 | 러프 화면 + 3피스 도안 생성 엔진 연결 완료 |
 | S4 | 사례 갤러리 (캐러셀) | 완료 (이미지·실제 문구 입력 필요) |
 | S5 | 팀 소개 배너 | 완료 |
 | S6 | 푸터 | 완료 (링크 주소 입력 필요) |
@@ -93,29 +94,30 @@ PC 설치 여부와 관계없이 같은 결과가 나온다. Pretendard Thin은 
 
 마커 위치(`left`/`top` %)는 지도 원본 좌표 기준이라 확대해도 구 위에 고정된다.
 
-## 맞춤 도안 configurator (S3)
+## 맞춤 도안 만들기 (S3)
 
-치수를 입력하면 3D 모델이 실시간으로 다시 만들어지고 STL로 내려받는다. 전부 브라우저에서 계산한다
-(서버·외부 API·외부 3D 서비스 없음). 원본: `이끼플레이트/configurator/`.
+화면은 Figma 러프 그대로, 로직은 `js/lib/moss/moss-engine.js`(이끼 플레이트 3피스 생성 엔진)다.
+엔진은 원본 번들(`src/core/{params,validate,geometry,stl}.js` → `npm run bundle`)을 수정 없이 복사한 것이고,
+계산은 전부 사용자 브라우저에서 manifold-3d(WASM)로 한다. 서버·외부 API·외부 3D 서비스 없음.
 
-```
-js/configurator/
-  core/      순수 계산 (DOM·Three.js 무의존). 원본과 바이트 단위로 동일 — 수정 금지
-    params.js    FIELDS · LIMITS · DEFAULTS · FIXED · 파생 규칙(derive)
-    validate.js  errors = 생성·다운로드 차단, warnings = 표시만
-    profile.js / triangulate.js / geometry.js   윤곽 → 삼각분할 → 메시
-    stl.js       binary STL 인코딩 + downloadSTL
-  viewer/viewer.js   Three.js 렌더링. 원본에서 dispose(렌더 루프·ResizeObserver·GPU 자원·캔버스 정리)만 보강
-  ui/controls.js     입력 폼 — FIELDS/LIMITS 를 읽어 자동 생성 (Figma 디자인 교체 지점)
-  ui/stats.js        결과 통계 표시
-  app.js             배선: 입력 → validate → buildMesh → viewer.update / stats / 다운로드
-```
+`js/configurator/app.js`가 화면과 엔진을 잇는다.
 
-- 입력 항목을 추가/제거하려면 `core/params.js`의 `FIELDS`/`LIMITS`만 고친다. UI는 자동으로 따라간다.
-- 디자인 교체는 `ui/`와 `css/configurator.css`만 건드린다. `controls.js` 계약:
-  `createControls(root, initialValues, onChange)` → `{ values, applyValidation(result), set(patch) }`.
-- 입력은 requestAnimationFrame으로 묶어 한 프레임에 한 번만 재생성한다.
-- 뷰어는 S3가 화면 근처에 올 때 mount하고, `pagehide`에서 dispose한다.
+| 화면 | 엔진 키 | 비고 |
+|---|---|---|
+| 위쪽 가로 화살표 입력 | `width` | 설치 공간 가로 |
+| 왼쪽 세로 화살표 입력 | `depth` | 설치 공간 세로 |
+| 오른쪽 위 입력 | `rearGap` | 세면대 뒤 공간 (0 또는 2cm 이상) |
+| 오른쪽 아래 입력 | `sideGap` | 세면대 옆 공간 (0 또는 2cm 이상) |
+
+- 화면은 cm, 엔진은 mm라서 `FIELDS[i].scale`(10)을 곱해 넘긴다. 기본값은 `DEFAULTS`(47 / 18 / 9 / 15 cm).
+- 앱이 뜰 때 `initGeometry()` 1회. wasm은 `manifold.js` 옆에서 자동으로 찾는다(`locateFile` 불필요).
+- 값이 바뀔 때마다 `validate()`. `errors`는 해당 칸 근처에 문구 + 칩 주황 + 버튼 막힘, `warnings`는 문구만.
+  가로·세로 문구는 칩 근처 전용 자리, 뒤·옆 문구는 기존 안내 문구 자리에 표시되고 없어지면 안내 문구로 돌아간다.
+- `stl 파일 생성하기` → `buildPieces()` → `downloadAll()`. 조각이 여러 개면 ZIP 하나(`moss_47x18cm_3pieces.zip`),
+  하나면 STL 하나로 받아진다.
+- 화면에 3D 미리보기 자리가 없어서 pieces 데이터는 다운로드에만 쓴다.
+- `npm test`(`test/engine.test.mjs`)는 기본값 3조각·옆 공간 0 → 1조각·뒤 공간 1 → 에러·빈칸 → 에러와
+  메시 닫힘·STL/ZIP 구조를 검사한다. (원본 `test/core.test.mjs`는 받지 못해서 이식 확인용으로 새로 작성)
 
 ## 사례 갤러리 카드 추가/수정 (S4)
 

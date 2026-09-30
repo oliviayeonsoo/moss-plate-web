@@ -1,113 +1,132 @@
 /**
- * S3 컨피규레이터 배선. 입력 → 검증 → 메시 생성 → 뷰어 / 통계 / 다운로드.
- * 계산은 core/, 그리기는 viewer/, 폼·표시는 ui/ 가 한다. 이 파일은 연결만 한다.
+ * S3 연결부 — Figma 러프 화면(index.html) ↔ 도안 생성 엔진(js/lib/moss/moss-engine.js).
+ * 엔진은 수정하지 않고 import 만 한다. 이 파일은 입력칸·문구 자리·버튼에 로직만 붙인다.
  *
- * 생명주기
- *  - 뷰어는 S3 가 화면 근처에 오면 mount (WebGL 컨텍스트를 늦게 만든다)
- *  - pagehide 에서 dispose (렌더 루프 · ResizeObserver · GPU 자원 해제)
- *  - 입력은 requestAnimationFrame 으로 묶어 한 프레임에 한 번만 재생성
+ *   앱 시작 1회 : initGeometry()                  (manifold-3d WASM 로드)
+ *   값이 바뀔 때: validate(cm × FIELDS.scale → mm)
+ *                 errors   → 해당 칸 근처에 문구, 버튼 막음
+ *                 warnings → 문구만, 버튼 허용
+ *   버튼        : buildPieces(r.params) → downloadAll(r.params, pieces)
+ *                 조각 여러 개면 ZIP 하나, 하나면 STL 하나
  */
-import { DEFAULTS } from './core/params.js';
-import { validate } from './core/validate.js';
-import { buildMesh } from './core/geometry.js';
-import { downloadSTL } from './core/stl.js';
-import { createViewer } from './viewer/viewer.js';
-import { createControls } from './ui/controls.js';
-import { createStats } from './ui/stats.js';
+import { DEFAULTS, FIELDS, validate, initGeometry, buildPieces, downloadAll } from '../lib/moss/moss-engine.js';
 
-const root = document.querySelector('[data-configurator]');
-if (root) init(root);
+const form = document.querySelector('[data-configurator]');
+if (form) init(form);
 
-function init(root) {
-  const $ = s => root.querySelector(s);
-  const stage = $('[data-cfg-stage]');
-  const download = $('[data-cfg-download]');
-  const general = $('[data-cfg-general]');
-  const stats = createStats($('[data-cfg-stats]'), $('[data-cfg-fixed]'));
+function init(form) {
+  const $ = s => form.querySelector(s);
+  const button = $('[data-cfg-action]');
+  const general = $('[data-cfg-message]');
 
-  let viewer = null;
-  let current = null;        // 마지막으로 성공한 { mesh, params }
-  let needsFrame = true;     // 다음 성공 메시에서 시점 맞춤
+  // 필드 키마다 입력칸 · 칩 · 문구 자리 (FIELDS 순서를 따른다)
+  const fields = FIELDS.map(f => {
+    const warn = form.querySelector(`[data-cfg-warn="${f.key}"]`);
+    const text = warn && warn.querySelector('[data-cfg-warn-text]');
+    return {
+      ...f,
+      input: form.querySelector(`[data-cfg-field="${f.key}"]`),
+      chip: form.querySelector(`[data-cfg-chip="${f.key}"]`),
+      msg: form.querySelector(`[data-cfg-msg="${f.key}"]`),   // 가로·세로
+      warn, text, guide: text ? text.innerHTML : null,          // 뒤·옆: 원래 안내 문구 보관
+    };
+  }).filter(f => f.input);
 
-  /* ---- 뷰어 mount / unmount ---- */
-  function mountViewer() {
-    if (viewer) return;
-    viewer = createViewer(stage);
-    if (current) showMesh(current.mesh);
-  }
-  function unmountViewer() {
-    if (!viewer) return;
-    viewer.dispose();
-    viewer = null;
-    needsFrame = true;
-  }
-  function showMesh(mesh) {
-    if (!viewer) return;
-    viewer.update(mesh);
-    if (needsFrame) {
-      needsFrame = false;
-      // 컨테이너 크기가 잡힌 뒤에 맞춰야 화면 중앙에 온다
-      requestAnimationFrame(() => { if (viewer) { viewer.resize(); viewer.frame(mesh); } });
+  let ready = false;
+  let result = null;
+
+  /* ---- 입력칸 ---------------------------------------------------------- */
+  // 숫자와 소수점 하나, 소수 한 자리까지
+  const sanitize = raw => {
+    let s = raw.replace(/[^0-9.]/g, '');
+    const dot = s.indexOf('.');
+    if (dot !== -1) s = s.slice(0, dot + 1) + s.slice(dot + 1).replace(/\./g, '').slice(0, 1);
+    return s.slice(0, 6);
+  };
+  const toMm = (s, scale) => {
+    if (s === '' || s === '.') return NaN;
+    return Math.round(parseFloat(s) * scale * 1000) / 1000;   // 0.1cm × 10 부동소수 오차 정리
+  };
+
+  // 칩 폭(세로 칩은 높이)을 내용 길이에 맞춘다 — 러프 화면의 기존 동작
+  const ruler = document.createElement('span');
+  ruler.setAttribute('aria-hidden', 'true');
+  ruler.style.cssText = 'position:absolute;visibility:hidden;white-space:pre;left:-9999px;top:0';
+  form.appendChild(ruler);
+  const fit = el => {
+    const cs = getComputedStyle(el);
+    ruler.style.font = cs.font;
+    ruler.style.letterSpacing = cs.letterSpacing;
+    ruler.style.writingMode = cs.writingMode;
+    ruler.textContent = el.value || el.placeholder;
+    const r = ruler.getBoundingClientRect();
+    if (cs.writingMode.startsWith('vertical')) el.style.height = Math.ceil(r.height) + 2 + 'px';
+    else el.style.width = Math.ceil(r.width) + 2 + 'px';
+  };
+
+  const values = () => Object.fromEntries(fields.map(f => [f.key, toMm(f.input.value, f.scale)]));
+
+  /* ---- 검증 결과 표시 --------------------------------------------------- */
+  function show(r) {
+    for (const f of fields) {
+      const e = r.errors.find(x => x.field === f.key);
+      const w = r.warnings.find(x => x.field === f.key);
+      const m = e || w;
+
+      if (e) f.chip.setAttribute('data-invalid', ''); else f.chip.removeAttribute('data-invalid');
+      f.input.setAttribute('aria-invalid', e ? 'true' : 'false');
+
+      if (f.msg) {                                   // 가로·세로: 칩 근처 문구 자리
+        f.msg.textContent = m ? m.message : '';
+        if (w && !e) f.msg.setAttribute('data-tone', 'warn'); else f.msg.removeAttribute('data-tone');
+      }
+      if (f.text) {                                  // 뒤·옆: 안내 문구 자리에 표시, 없으면 원래 안내로
+        if (m) f.text.textContent = m.message; else f.text.innerHTML = f.guide;
+        if (m) f.warn.setAttribute('data-msg', ''); else f.warn.removeAttribute('data-msg');
+        if (e) f.warn.setAttribute('data-active', ''); else f.warn.removeAttribute('data-active');
+        if (w && !e) f.warn.setAttribute('data-tone', 'warn'); else f.warn.removeAttribute('data-tone');
+      }
     }
   }
 
-  if ('IntersectionObserver' in window) {
-    const io = new IntersectionObserver(entries => {
-      if (entries.some(e => e.isIntersecting)) { mountViewer(); io.disconnect(); }
-    }, { rootMargin: '400px 0px' });
-    io.observe(stage);
-  } else {
-    mountViewer();
+  function update() {
+    result = validate(values());
+    show(result);
+    button.disabled = !ready || !result.ok;
   }
-  window.addEventListener('pagehide', unmountViewer);
-  window.addEventListener('pageshow', e => { if (e.persisted) mountViewer(); });
 
-  /* ---- 입력 → 검증 → 생성 ---- */
-  function render(values) {
-    const result = validate(values);
-    controls.applyValidation(result);
-    general.textContent = '';
+  /* ---- 이벤트 ---------------------------------------------------------- */
+  for (const f of fields) {
+    f.input.value = String(DEFAULTS[f.key] / f.scale);        // 기본값 47 / 18 / 9 / 15 cm
+    fit(f.input);
+    f.input.addEventListener('input', () => {
+      const clean = sanitize(f.input.value);
+      if (clean !== f.input.value) f.input.value = clean;
+      fit(f.input);
+      update();
+    });
+  }
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => fields.forEach(f => fit(f.input)));
 
-    if (!result.ok) {
-      download.disabled = true;
-      stats.setStale(true);
-      return;
-    }
-
-    let mesh;
+  // 버튼 클릭과 입력칸 Enter 모두 여기로 온다
+  form.addEventListener('submit', e => {
+    e.preventDefault();
+    if (!ready || !result || !result.ok) return;
     try {
-      mesh = buildMesh(result.params);
-    } catch (e) {
-      general.textContent = `모델 생성 실패: ${e.message}`;
-      download.disabled = true;
-      stats.setStale(true);
-      return;
+      const pieces = buildPieces(result.params);
+      downloadAll(result.params, pieces);
+      general.textContent = '';
+    } catch (err) {
+      general.textContent = `도안을 만들지 못했어요: ${err.message}`;
     }
-
-    current = { mesh, params: result.params };
-    showMesh(mesh);
-    stats.render(mesh.stats, result.params);
-    stats.setStale(false);
-    download.disabled = false;
-  }
-
-  let pending = null;
-  function schedule(values) {
-    const first = pending === null;
-    pending = values;
-    if (first) requestAnimationFrame(() => { const v = pending; pending = null; render(v); });
-  }
-
-  const controls = createControls($('[data-cfg-fields]'), DEFAULTS, schedule);
-
-  /* ---- 버튼 ---- */
-  download.addEventListener('click', () => {
-    if (!current || download.disabled) return;
-    const p = current.params;
-    downloadSTL(current.mesh, `moss_tray_${p.width}x${p.depth}.stl`);
   });
-  $('[data-cfg-reset]').addEventListener('click', () => { needsFrame = true; controls.set(DEFAULTS); });
-  $('[data-cfg-refit]').addEventListener('click', () => { if (viewer && current) viewer.frame(current.mesh); });
 
-  render(DEFAULTS);
+  /* ---- 엔진 준비 (앱 시작 시 1회) --------------------------------------- */
+  button.disabled = true;
+  button.setAttribute('aria-busy', 'true');
+  update();
+  initGeometry()
+    .then(() => { ready = true; })
+    .catch(err => { general.textContent = `도안 생성 엔진을 불러오지 못했어요: ${err.message}`; })
+    .finally(() => { button.removeAttribute('aria-busy'); update(); });
 }

@@ -15,12 +15,9 @@
   <link rel="stylesheet" href="css/team-banner.css">
   <link rel="stylesheet" href="css/footer.css">
   <script src="js/seoul-map.js" defer></script>
-  <!-- S3 configurator: ES 모듈 (core 계산 · viewer 렌더 · ui 표시). three 는 npm 패키지를 로컬 경로로 연결 -->
+  <!-- S3: 도안 생성 엔진(manifold-3d WASM)은 npm 패키지를 로컬 경로로 연결. 번들러 없음 -->
   <script type="importmap">
-  { "imports": {
-      "three": "./node_modules/three/build/three.module.js",
-      "three/addons/": "./node_modules/three/examples/jsm/"
-  } }
+  { "imports": { "manifold-3d": "./node_modules/manifold-3d/manifold.js" } }
   </script>
   <script type="module" src="js/configurator/app.js"></script>
   <!-- S4 사례 갤러리: 데이터와 렌더/캐러셀 분리 -->
@@ -208,7 +205,7 @@
         </div>
       </section>
 
-      <!-- S3. 맞춤 도안 만들기 (configurator UI — 기능 로직은 js/configurator/*) -->
+      <!-- S3. 맞춤 도안 만들기 (화면: Figma 러프 / 로직: js/lib/moss/moss-engine.js, 연결: js/configurator/app.js) -->
       <section class="cfg-section" id="configurator" aria-labelledby="cfg-title">
         <h2 class="section-title section-title--center" id="cfg-title">
           <span class="section-title__orange">내 세면대에 꼭 맞는</span>
@@ -216,26 +213,68 @@
         </h2>
         <p class="section-sub section-sub--center section-sub--display">치수만 입력하면 바로 3D 도안이 만들어져요. *stl 파일</p>
 
-        <div class="cfg-panel" data-configurator>
-          <div class="cfg-view">
-            <div class="cfg-stage" data-cfg-stage aria-label="이끼 플레이트 3D 미리보기" role="img"></div>
-            <div class="cfg-view__tools">
-              <button type="button" class="cfg-textbtn" data-cfg-refit>시점 맞춤</button>
-              <button type="button" class="cfg-textbtn" data-cfg-reset>기본값</button>
-            </div>
+        <form class="cfg-panel" data-configurator novalidate aria-describedby="cfg-message">
+
+          <!-- 설치 가능 영역 + 세면대/수전 도식 (asset 13.png를 같은 좌표로 벡터화) -->
+          <svg class="cfg-area" viewBox="0 0 1372 627" aria-hidden="true" focusable="false">
+            <rect width="1372" height="627" fill="#fff"/>
+            <g fill="#EBEBEB"><circle cx="13" cy="25" r="7.5"/><circle cx="109" cy="25" r="7.5"/><circle cx="205" cy="25" r="7.5"/><circle cx="301" cy="25" r="7.5"/><circle cx="397" cy="25" r="7.5"/><circle cx="493" cy="25" r="7.5"/><circle cx="589" cy="25" r="7.5"/><circle cx="685" cy="25" r="7.5"/><circle cx="781" cy="25" r="7.5"/><circle cx="877" cy="25" r="7.5"/><circle cx="973" cy="25" r="7.5"/><circle cx="1069" cy="25" r="7.5"/><circle cx="1165" cy="25" r="7.5"/><circle cx="1261" cy="25" r="7.5"/><circle cx="1357" cy="25" r="7.5"/><circle cx="13" cy="121" r="7.5"/><circle cx="109" cy="121" r="7.5"/><circle cx="205" cy="121" r="7.5"/><circle cx="301" cy="121" r="7.5"/><circle cx="397" cy="121" r="7.5"/><circle cx="493" cy="121" r="7.5"/><circle cx="589" cy="121" r="7.5"/><circle cx="685" cy="121" r="7.5"/><circle cx="781" cy="121" r="7.5"/><circle cx="877" cy="121" r="7.5"/><circle cx="973" cy="121" r="7.5"/><circle cx="1069" cy="121" r="7.5"/><circle cx="1165" cy="121" r="7.5"/><circle cx="1261" cy="121" r="7.5"/><circle cx="1357" cy="121" r="7.5"/><circle cx="13" cy="217" r="7.5"/><circle cx="109" cy="217" r="7.5"/><circle cx="205" cy="217" r="7.5"/><circle cx="301" cy="217" r="7.5"/><circle cx="397" cy="217" r="7.5"/><circle cx="493" cy="217" r="7.5"/><circle cx="589" cy="217" r="7.5"/><circle cx="685" cy="217" r="7.5"/><circle cx="781" cy="217" r="7.5"/><circle cx="877" cy="217" r="7.5"/><circle cx="973" cy="217" r="7.5"/><circle cx="1069" cy="217" r="7.5"/><circle cx="1165" cy="217" r="7.5"/><circle cx="1261" cy="217" r="7.5"/><circle cx="1357" cy="217" r="7.5"/><circle cx="13" cy="313" r="7.5"/><circle cx="109" cy="313" r="7.5"/><circle cx="205" cy="313" r="7.5"/><circle cx="301" cy="313" r="7.5"/><circle cx="397" cy="313" r="7.5"/><circle cx="493" cy="313" r="7.5"/><circle cx="589" cy="313" r="7.5"/><circle cx="685" cy="313" r="7.5"/><circle cx="781" cy="313" r="7.5"/><circle cx="877" cy="313" r="7.5"/><circle cx="973" cy="313" r="7.5"/><circle cx="1069" cy="313" r="7.5"/><circle cx="1165" cy="313" r="7.5"/><circle cx="1261" cy="313" r="7.5"/><circle cx="1357" cy="313" r="7.5"/><circle cx="13" cy="409" r="7.5"/><circle cx="109" cy="409" r="7.5"/><circle cx="205" cy="409" r="7.5"/><circle cx="301" cy="409" r="7.5"/><circle cx="397" cy="409" r="7.5"/><circle cx="493" cy="409" r="7.5"/><circle cx="589" cy="409" r="7.5"/><circle cx="685" cy="409" r="7.5"/><circle cx="781" cy="409" r="7.5"/><circle cx="877" cy="409" r="7.5"/><circle cx="973" cy="409" r="7.5"/><circle cx="1069" cy="409" r="7.5"/><circle cx="1165" cy="409" r="7.5"/><circle cx="1261" cy="409" r="7.5"/><circle cx="1357" cy="409" r="7.5"/><circle cx="13" cy="505" r="7.5"/><circle cx="109" cy="505" r="7.5"/><circle cx="205" cy="505" r="7.5"/><circle cx="301" cy="505" r="7.5"/><circle cx="397" cy="505" r="7.5"/><circle cx="493" cy="505" r="7.5"/><circle cx="589" cy="505" r="7.5"/><circle cx="685" cy="505" r="7.5"/><circle cx="781" cy="505" r="7.5"/><circle cx="877" cy="505" r="7.5"/><circle cx="973" cy="505" r="7.5"/><circle cx="1069" cy="505" r="7.5"/><circle cx="1165" cy="505" r="7.5"/><circle cx="1261" cy="505" r="7.5"/><circle cx="1357" cy="505" r="7.5"/><circle cx="13" cy="601" r="7.5"/><circle cx="109" cy="601" r="7.5"/><circle cx="205" cy="601" r="7.5"/><circle cx="301" cy="601" r="7.5"/><circle cx="397" cy="601" r="7.5"/><circle cx="493" cy="601" r="7.5"/><circle cx="589" cy="601" r="7.5"/><circle cx="685" cy="601" r="7.5"/><circle cx="781" cy="601" r="7.5"/><circle cx="877" cy="601" r="7.5"/><circle cx="973" cy="601" r="7.5"/><circle cx="1069" cy="601" r="7.5"/><circle cx="1165" cy="601" r="7.5"/><circle cx="1261" cy="601" r="7.5"/><circle cx="1357" cy="601" r="7.5"/></g>
+            <path fill="#C4C4C4" d="M314 171H1057V577A50 50 0 0 1 1007 627H364A50 50 0 0 1 314 577Z"/>
+            <rect fill="#D2D2D2" x="666" y="190" width="39" height="117"/>
+            <circle fill="#D9D9D9" cx="688" cy="153.5" r="44.5"/>
+          </svg>
+
+          <!-- 치수선 (장식) -->
+          <span class="cfg-dim cfg-dim--width-l"><svg viewBox="0 0 137.2 16" width="137.2" height="16" aria-hidden="true" focusable="false"><line x1="1" y1="8" x2="136.2" y2="8"/><polyline points="8.7,0.6 1,8 8.7,15.4"/></svg></span>
+          <span class="cfg-dim cfg-dim--width-r"><svg viewBox="0 0 127.4 16" width="127.4" height="16" aria-hidden="true" focusable="false"><line x1="1" y1="8" x2="126.4" y2="8"/><polyline points="118.7,0.6 126.4,8 118.7,15.4"/></svg></span>
+          <span class="cfg-dim cfg-dim--height-u"><svg viewBox="0 0 16 30.8" width="16" height="30.8" aria-hidden="true" focusable="false"><line x1="8" y1="1" x2="8" y2="29.8"/><polyline points="0.6,8.7 8,1 15.4,8.7"/></svg></span>
+          <span class="cfg-dim cfg-dim--height-d"><svg viewBox="0 0 16 30.7" width="16" height="30.7" aria-hidden="true" focusable="false"><line x1="8" y1="1" x2="8" y2="29.7"/><polyline points="0.6,22.0 8,29.7 15.4,22.0"/></svg></span>
+          <span class="cfg-dim cfg-dim--back"><svg viewBox="0 0 16 31.7" width="16" height="31.7" aria-hidden="true" focusable="false"><line x1="8" y1="1" x2="8" y2="30.7"/><polyline points="0.6,8.7 8,1 15.4,8.7"/><polyline points="0.6,23.0 8,30.7 15.4,23.0"/></svg></span>
+          <span class="cfg-dim cfg-dim--side"><svg viewBox="0 0 86.4 16" width="86.4" height="16" aria-hidden="true" focusable="false"><line x1="1" y1="8" x2="85.4" y2="8"/><polyline points="8.7,0.6 1,8 8.7,15.4"/><polyline points="77.7,0.6 85.4,8 77.7,15.4"/></svg></span>
+
+          <!-- 입력 칩: data-cfg-field 키 = 엔진 FIELDS 키 (width · depth · rearGap · sideGap) -->
+          <label class="cfg-chip cfg-chip--width" data-cfg-chip="width">
+            <span class="sr-only">설치 가능한 공간 가로 길이</span>
+            <input class="cfg-chip__input" data-cfg-field="width" type="text" inputmode="decimal" placeholder="(입력)" autocomplete="off" aria-describedby="cfg-msg-width cfg-message">
+            <span class="cfg-chip__unit" aria-hidden="true">cm</span>
+          </label>
+          <label class="cfg-chip cfg-chip--height cfg-chip--vertical" data-cfg-chip="depth">
+            <span class="sr-only">설치 가능한 공간 세로 길이</span>
+            <span class="cfg-chip__rotate">
+              <input class="cfg-chip__input" data-cfg-field="depth" type="text" inputmode="decimal" placeholder="(입력)" autocomplete="off" aria-describedby="cfg-msg-depth cfg-message">
+            </span>
+            <span class="cfg-chip__unit" aria-hidden="true">cm</span>
+          </label>
+          <label class="cfg-chip cfg-chip--back" data-cfg-chip="rearGap">
+            <span class="sr-only">세면대 뒤쪽 여유 공간</span>
+            <input class="cfg-chip__input" data-cfg-field="rearGap" type="text" inputmode="decimal" placeholder="(입력)" autocomplete="off" aria-describedby="cfg-warn-rearGap cfg-message">
+            <span class="cfg-chip__unit" aria-hidden="true">cm</span>
+          </label>
+          <label class="cfg-chip cfg-chip--side" data-cfg-chip="sideGap">
+            <span class="sr-only">세면대 옆쪽 여유 공간</span>
+            <input class="cfg-chip__input" data-cfg-field="sideGap" type="text" inputmode="decimal" placeholder="(입력)" autocomplete="off" aria-describedby="cfg-warn-sideGap cfg-message">
+            <span class="cfg-chip__unit" aria-hidden="true">cm</span>
+          </label>
+
+          <!-- 가로·세로 검증 문구 자리 (평소엔 비어 있음) -->
+          <p class="cfg-field-msg cfg-field-msg--width" id="cfg-msg-width" data-cfg-msg="width" aria-live="polite"></p>
+          <p class="cfg-field-msg cfg-field-msg--depth" id="cfg-msg-depth" data-cfg-msg="depth" aria-live="polite"></p>
+
+          <!-- 안내/경고 (뒤·옆 공간 검증 문구도 이 자리에 표시) -->
+          <div class="cfg-warn cfg-warn--back" id="cfg-warn-rearGap" data-cfg-warn="rearGap">
+            <svg class="cfg-warn__icon" viewBox="0 0 20 18" aria-hidden="true" focusable="false"><path d="M8.3 1.2a2 2 0 0 1 3.4 0l7.9 13.7a2 2 0 0 1-1.7 3H2.1a2 2 0 0 1-1.7-3z"/><path class="cfg-warn__mark" d="M10 4.8v5"/><circle class="cfg-warn__dot" cx="10" cy="12.2" r="0.85"/></svg>
+            <p class="cfg-warn__text" data-cfg-warn-text>세면대로부터<br>최소 2cm는 띄워주세요<br>공간이 없는 경우<br>0으로 입력해주세요.</p>
+          </div>
+          <div class="cfg-warn cfg-warn--side" id="cfg-warn-sideGap" data-cfg-warn="sideGap">
+            <svg class="cfg-warn__icon" viewBox="0 0 20 18" aria-hidden="true" focusable="false"><path d="M8.3 1.2a2 2 0 0 1 3.4 0l7.9 13.7a2 2 0 0 1-1.7 3H2.1a2 2 0 0 1-1.7-3z"/><path class="cfg-warn__mark" d="M10 4.8v5"/><circle class="cfg-warn__dot" cx="10" cy="12.2" r="0.85"/></svg>
+            <p class="cfg-warn__text" data-cfg-warn-text>세면대로부터<br>최소 2cm는 띄워주세요</p>
           </div>
 
-          <div class="cfg-side">
-            <!-- core/params.js 의 FIELDS 로 자동 생성 -->
-            <div class="cfg-fields" data-cfg-fields></div>
-          </div>
+          <p class="cfg-legend"><span class="cfg-legend__swatch" aria-hidden="true"></span>설치 가능한 공간</p>
 
-          <dl class="cfg-stats" data-cfg-stats aria-live="polite"></dl>
-          <p class="cfg-fixed" data-cfg-fixed></p>
-          <p class="cfg-general" data-cfg-general role="alert"></p>
-
-          <button class="cfg-cta" type="button" data-cfg-download disabled>stl 파일 생성하기 &gt;</button>
-        </div>
+          <button class="cfg-cta" type="submit" data-cfg-action>stl 파일 생성하기 &gt;</button>
+          <p class="cfg-message" id="cfg-message" data-cfg-message role="status" aria-live="polite"></p>
+        </form>
       </section>
 
       <!-- S4. 사례 갤러리 (캐러셀) — 카드 데이터: js/cases/cases-data.js -->
