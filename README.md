@@ -16,6 +16,14 @@ S3 컨피규레이터가 ES 모듈이라 `index.html`을 파일로 직접 열면
 나머지 섹션은 파일로 열어도 동작한다. 배포 시 `node_modules/three/build/three.module.js`와
 `node_modules/three/examples/jsm/controls/OrbitControls.js`가 같은 경로로 함께 올라가야 한다.
 
+## 배포 (GitHub Pages)
+
+주소: https://oliviayeonsoo.github.io/moss-plate-web/
+
+`main`에 푸시하면 `.github/workflows/pages.yml`이 자동으로 배포한다.
+three 설치(`npm ci`) → core 테스트(`npm test`) → 사이트 파일과 three 파일 2개를 모아 Pages에 올린다.
+테스트가 실패하면 배포하지 않는다. 처음 한 번은 저장소 Settings → Pages → Source를 **GitHub Actions**로 설정해야 한다.
+
 ## 구조
 
 ```

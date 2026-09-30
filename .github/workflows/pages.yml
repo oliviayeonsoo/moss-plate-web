@@ -1,0 +1,55 @@
+# GitHub Pages 배포
+# main 에 푸시하면 three 를 설치하고(npm ci), core 테스트를 통과한 경우에만
+# 사이트 파일 + S3 가 쓰는 three 파일 2개를 모아 Pages 에 올린다.
+# (저장소 Settings → Pages → Source 를 "GitHub Actions" 로 한 번 설정해야 한다)
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install three
+        run: npm ci
+
+      - name: Test S3 core
+        run: npm test
+
+      - name: Assemble site
+        run: |
+          mkdir -p _site/node_modules/three/build _site/node_modules/three/examples/jsm/controls
+          cp -r index.html css js assets fonts _site/
+          cp node_modules/three/build/three.module.js _site/node_modules/three/build/
+          cp node_modules/three/examples/jsm/controls/OrbitControls.js _site/node_modules/three/examples/jsm/controls/
+          cp node_modules/three/LICENSE _site/node_modules/three/
+
+      - uses: actions/configure-pages@v5
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+      - id: deployment
+        uses: actions/deploy-pages@v4
