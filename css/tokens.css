@@ -29,7 +29,7 @@
   /* Bold: 부제, CTA, 효과 카드 문구, 섹션 헤드라인 */
   --font-display: "Y Pairing", "YPairingFont", "Y페어링체", "Pretendard", sans-serif;
   /* Regular: 소속 표기, 소개 문단, 라벨, 링크, 본문 전반 */
-  --font-body: "Pretendard", "Pretendard Variable", -apple-system, BlinkMacSystemFont,
+  --font-body: "Pretendard", -apple-system, BlinkMacSystemFont,
                "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", sans-serif;
 
   --tracking-ko: -0.02em;         /* 한글 기본 자간 */
