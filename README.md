@@ -20,9 +20,15 @@ css/
   tokens.css   색·폰트·레이아웃 토큰 (폰트 교체는 여기서만)
   base.css     reset + 좌측 고정 / 우측 스크롤 2단 뼈대
   hero.css     S0. Hero
+  section.css  우측 섹션 공통 제목/부제
+  map.css      S1. 서울 지도 + 파트너 로고 컨베이어
+js/
+  seoul-map.js 지도 확대/축소·드래그, 마커 툴팁, 축척
 assets/
   icons/       Hero 효과 카드 아이콘 (손그림, 투명 배경 원본)
-  partners/    파트너 로고 원본 (S2에서 사용 예정)
+  map/districts/  서울 25개 구 크레용 지도 (무손실 webp, 구별 레이어)
+  partners/    파트너 로고 원본
+  partners/trimmed/  여백을 잘라 높이 120px로 줄인 사용본
 fonts/         웹폰트 파일 (Y Clover Bold, Y페어링체 Bold, Pretendard Regular·Medium·SemiBold·Bold — woff2)
 ```
 
@@ -31,8 +37,8 @@ fonts/         웹폰트 파일 (Y Clover Bold, Y페어링체 Bold, Pretendard R
 | # | 섹션 | 상태 |
 |---|---|---|
 | S0 | Hero (좌측 고정 패널) | 완료 |
-| S1 | 서울 지도 | 대기 |
-| S2 | 파트너 로고 | 대기 |
+| S1 | 서울 지도 + 파트너 로고 컨베이어 | 완료 (기관 데이터 입력 필요) |
+| S2 | 파트너 로고 | S1에 포함 |
 | S3 | 맞춤 도안 컨피규레이터 | 대기 |
 | S4 | 사례 갤러리 | 대기 |
 | S5 | 팀 소개 배너 | 대기 |
@@ -52,3 +58,16 @@ Y Clover와 Pretendard도 같은 방식으로 연결한다. 세 폰트 모두 �
 PC 설치 여부와 관계없이 같은 결과가 나온다. Pretendard Thin은 쓰는 곳이 없어 포함하지 않았다.
 폰트를 바꾸려면 `css/tokens.css`의 해당 스택과 `css/fonts.css`를 수정한다.
 
+## 서울 지도 기관 정보 수정
+
+마커는 `index.html`의 `.seoul-map__marker` 버튼이다. 툴팁 내용은 버튼의 속성에서 읽는다.
+
+| 속성 | 내용 |
+|---|---|
+| `data-name` | 기관명 (툴팁 제목) |
+| `data-address` / `data-address2` | 주소 1줄 / 2줄 |
+| `data-href` | 화살표 버튼 링크 |
+| `data-default` | 처음 열려 있는 마커 (현재 강동구) |
+| `data-placeholder` | 정보가 아직 없는 마커 표시용. 정보를 넣으면 지운다 |
+
+마커 위치(`left`/`top` %)는 지도 원본 좌표 기준이라 확대해도 구 위에 고정된다.

@@ -1,0 +1,299 @@
+/* ==========================================================================
+   S1. 서울 지도 — 다운로드 현황 지도 + 파트너 로고 컨베이어
+   치수는 러프(1440 기준) 측정값.
+   ========================================================================== */
+
+.map-section {
+  padding: 81px 0 64px;
+}
+
+.map-section__inner {
+  padding: 0 72px;
+}
+
+/* ---- 지도 패널 (모눈종이) --------------------------------------------- */
+.seoul-map {
+  --map-grid-major: #B4D7DC;
+  --map-grid-minor: #D8ECEF;
+  --map-grid-step: 9.45px;              /* 작은 칸 */
+  --map-grid-major-step: 47.25px;       /* 큰 칸 = 작은 칸 × 5 */
+  --map-grid-offset: 24px;              /* 패널 왼쪽/위에서 첫 굵은 선까지 */
+  --z: 1;                               /* 현재 확대 배율 (JS가 갱신) */
+
+  position: relative;
+  height: 472px;
+  margin-top: 25px;
+  overflow: hidden;
+  border: 1.5px solid var(--color-orange);
+  border-radius: 24px;
+  background-color: var(--color-white);
+  background-image:
+    linear-gradient(to right, var(--map-grid-major) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--map-grid-major) 1px, transparent 1px),
+    linear-gradient(to right, var(--map-grid-minor) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--map-grid-minor) 1px, transparent 1px);
+  background-size:
+    var(--map-grid-major-step) var(--map-grid-major-step),
+    var(--map-grid-major-step) var(--map-grid-major-step),
+    var(--map-grid-step) var(--map-grid-step),
+    var(--map-grid-step) var(--map-grid-step);
+  background-position: var(--map-grid-offset) var(--map-grid-offset);
+}
+
+.seoul-map__viewport {
+  position: absolute;
+  inset: 0;
+  touch-action: none;
+}
+
+.seoul-map[data-zoomed] .seoul-map__viewport         { cursor: grab; }
+.seoul-map[data-dragging] .seoul-map__viewport       { cursor: grabbing; }
+
+/* 지도 원본 좌표(1589×1304 영역)를 0.2961배로 배치 */
+.seoul-map__stage {
+  position: absolute;
+  left: 102px;
+  top: 29px;
+  width: 470.5px;
+  height: 386px;
+  transform-origin: 50% 50%;
+  transition: transform 280ms var(--ease);
+  will-change: transform;
+}
+
+.seoul-map[data-dragging] .seoul-map__stage { transition: none; }
+
+.seoul-map__district {
+  position: absolute;
+  display: block;
+  height: auto;
+  pointer-events: none;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+/* ---- 마커 ------------------------------------------------------------- */
+.seoul-map__marker {
+  --marker-a: #FF894B;
+  --marker-b: #FF4E4C;
+
+  position: absolute;
+  width: 21px;
+  height: 21px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cdefs%3E%3CclipPath id='r'%3E%3Crect x='12' width='12' height='24'/%3E%3C/clipPath%3E%3C/defs%3E%3Cpath id='s' d='M12 4.6l2.2 4.6 5 .6-3.7 3.4 1 5-4.5-2.5-4.5 2.5 1-5-3.7-3.4 5-.6z' fill='%23fff'/%3E%3Cpath d='M12 4.6l2.2 4.6 5 .6-3.7 3.4 1 5-4.5-2.5-4.5 2.5 1-5-3.7-3.4 5-.6z' fill='%23F3E6E8' clip-path='url(%23r)'/%3E%3C/svg%3E") center / 100% no-repeat,
+    linear-gradient(to right, var(--marker-a) 50%, var(--marker-b) 50%);
+  cursor: pointer;
+  transform: translate(-50%, -50%) scale(calc(1 / var(--z)));
+  transition: transform 280ms var(--ease);
+}
+
+.seoul-map__marker:hover,
+.seoul-map__marker[aria-expanded="true"] {
+  transform: translate(-50%, -50%) scale(calc(1.12 / var(--z)));
+}
+
+.seoul-map__marker:focus-visible {
+  outline: 2px solid var(--color-orange);
+  outline-offset: 2px;
+}
+
+/* ---- 툴팁 ------------------------------------------------------------- */
+.map-tooltip {
+  position: absolute;
+  z-index: 2;
+  min-width: 159px;
+  padding: 17px 34px 14px 20px;
+  border-radius: 12px;
+  background: var(--color-orange);
+  color: var(--color-white);
+  pointer-events: auto;
+}
+
+.map-tooltip[hidden] { display: none; }
+
+.map-tooltip__name {
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 1.2;
+  letter-spacing: 0;
+  white-space: nowrap;
+}
+
+.map-tooltip__address {
+  margin-top: 5px;
+  font-size: 10.5px;
+  font-weight: 400;
+  line-height: 1.1;
+  letter-spacing: 0;
+  white-space: nowrap;
+  opacity: 0.92;
+}
+
+.map-tooltip__link {
+  position: absolute;
+  right: 12px;
+  bottom: 14px;
+  display: block;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  color: var(--color-orange);
+}
+
+.map-tooltip__link svg { display: block; width: 100%; height: 100%; }
+
+.map-tooltip__link:focus-visible {
+  outline: 2px solid var(--color-white);
+  outline-offset: 2px;
+}
+
+.map-tooltip__tail {
+  position: absolute;
+  top: calc(100% - 1px);
+  left: var(--tail-x, 46px);
+  width: 18px;
+  height: 17px;
+  color: var(--color-orange);
+}
+
+/* 위쪽 공간이 부족하면 마커 아래로 */
+.map-tooltip[data-placement="below"] .map-tooltip__tail {
+  top: auto;
+  bottom: calc(100% - 1px);
+  transform: scaleY(-1);
+}
+
+/* ---- 줌 컨트롤 + 축척 ------------------------------------------------- */
+.map-controls {
+  position: absolute;
+  left: 31px;
+  bottom: 25px;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.map-zoom {
+  display: flex;
+  align-items: center;
+  height: 22px;
+  padding: 0 9px;
+  border-radius: 11px;
+  background: var(--color-cyan);
+}
+
+.map-zoom__btn {
+  display: grid;
+  place-items: center;
+  width: 20px;
+  height: 22px;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+}
+
+.map-zoom__btn svg {
+  width: 10px;
+  height: 10px;
+  fill: none;
+  stroke: var(--color-white);
+  stroke-width: 2;
+}
+
+.map-zoom__btn:disabled { cursor: default; opacity: 0.45; }
+
+.map-zoom__btn:focus-visible {
+  outline: 2px solid var(--color-white);
+  outline-offset: -3px;
+  border-radius: 6px;
+}
+
+.map-zoom__divider {
+  width: 1px;
+  height: 11px;
+  margin: 0 1px;
+  background: rgba(255, 255, 255, 0.85);
+}
+
+.map-scale {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  color: var(--color-cyan);
+}
+
+.map-scale__bar {
+  display: block;
+  width: var(--scale-w, 42px);
+  height: 7px;
+  border: 1px solid currentColor;
+  border-top: 0;
+  transition: width 280ms var(--ease);
+}
+
+.map-scale__labels {
+  display: flex;
+  justify-content: space-between;
+  width: calc(var(--scale-w, 42px) + 14px);
+  margin-left: -3px;
+  font-size: 9px;
+  line-height: 1;
+  letter-spacing: 0;
+  transition: width 280ms var(--ease);
+}
+
+/* ---- 파트너 로고 컨베이어 --------------------------------------------- */
+.partners {
+  margin: 79px 72px 0;
+  overflow: hidden;
+  -webkit-mask-image: linear-gradient(to right, transparent, #000 40px, #000 calc(100% - 40px), transparent);
+          mask-image: linear-gradient(to right, transparent, #000 40px, #000 calc(100% - 40px), transparent);
+}
+
+.partners__track {
+  display: flex;
+  width: max-content;
+  animation: partners-marquee 34s linear infinite;
+}
+
+.partners:hover .partners__track {
+  animation-play-state: paused;
+}
+
+.partners__list {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  gap: 64px;
+  padding-right: 64px;
+}
+
+.partners__item img {
+  display: block;
+  width: auto;
+  height: var(--logo-h);
+}
+
+/* 러프 기준 높이 (C-ON, econow는 나머지와 시각 크기를 맞춤) */
+.partners__item--woori-dongne-kium-center { --logo-h: 24px; }
+.partners__item--nanum-plus-c-on          { --logo-h: 26px; }
+.partners__item--seoul-city-slogan        { --logo-h: 23px; }
+.partners__item--seoultech                { --logo-h: 20px; }
+.partners__item--econow                   { --logo-h: 17px; }
+
+@keyframes partners-marquee {
+  to { transform: translateX(-50%); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .partners__track { animation: none; }
+  .seoul-map__stage,
+  .seoul-map__marker { transition: none; }
+}

@@ -8,6 +8,9 @@
   <link rel="stylesheet" href="css/tokens.css">
   <link rel="stylesheet" href="css/base.css">
   <link rel="stylesheet" href="css/hero.css">
+  <link rel="stylesheet" href="css/section.css">
+  <link rel="stylesheet" href="css/map.css">
+  <script src="js/seoul-map.js" defer></script>
 </head>
 <body>
   <div class="page">
@@ -70,8 +73,125 @@
       </div>
     </header>
 
-    <!-- S1~S6: 섹션별로 순서대로 작업 예정 -->
-    <main class="content"></main>
+    <!-- S1~S6: 섹션별로 순서대로 작업 -->
+    <main class="content">
+
+      <!-- S1. 서울 지도 (다운로드 현황) + 파트너 로고 -->
+      <section class="map-section" aria-labelledby="map-title">
+        <div class="map-section__inner">
+          <h2 class="section-title" id="map-title">
+            <span class="section-title__orange">지금 서울은</span>
+            <span class="section-title__cyan">초록색으로 물드는 중</span>
+          </h2>
+          <p class="section-sub">숲을 지키는 이끼 도안, 벌써 이만큼 다운로드되었어요</p>
+
+          <div class="seoul-map" data-seoul-map>
+            <div class="seoul-map__viewport" data-map-viewport>
+              <div class="seoul-map__stage" data-map-stage>
+              <img class="seoul-map__district" src="assets/map/districts/gangseo.webp" alt="" data-district="gangseo" style="left:0.000%;top:35.429%;width:28.131%">
+              <img class="seoul-map__district" src="assets/map/districts/yangcheon.webp" alt="" data-district="yangcheon" style="left:13.216%;top:54.448%;width:17.306%">
+              <img class="seoul-map__district" src="assets/map/districts/guro.webp" alt="" data-district="guro" style="left:11.265%;top:66.411%;width:22.404%">
+              <img class="seoul-map__district" src="assets/map/districts/geumcheon.webp" alt="" data-district="geumcheon" style="left:24.984%;top:77.147%;width:15.041%">
+              <img class="seoul-map__district" src="assets/map/districts/yeongdeungpo.webp" alt="" data-district="yeongdeungpo" style="left:26.746%;top:53.067%;width:17.873%">
+              <img class="seoul-map__district" src="assets/map/districts/dongjak.webp" alt="" data-district="dongjak" style="left:32.725%;top:66.258%;width:21.901%">
+              <img class="seoul-map__district" src="assets/map/districts/gwanak.webp" alt="" data-district="gwanak" style="left:32.159%;top:74.847%;width:21.397%">
+              <img class="seoul-map__district" src="assets/map/districts/seocho.webp" alt="" data-district="seocho" style="left:50.913%;top:64.340%;width:28.383%">
+              <img class="seoul-map__district" src="assets/map/districts/gangnam.webp" alt="" data-district="gangnam" style="left:58.590%;top:60.353%;width:26.935%">
+              <img class="seoul-map__district" src="assets/map/districts/songpa.webp" alt="" data-district="songpa" style="left:70.862%;top:57.592%;width:23.914%">
+              <img class="seoul-map__district" src="assets/map/districts/gangdong.webp" alt="" data-district="gangdong" style="left:82.505%;top:42.868%;width:17.495%">
+              <img class="seoul-map__district" src="assets/map/districts/gwangjin.webp" alt="" data-district="gwangjin" style="left:68.911%;top:46.242%;width:14.726%">
+              <img class="seoul-map__district" src="assets/map/districts/seongdong.webp" alt="" data-district="seongdong" style="left:57.269%;top:46.702%;width:16.488%">
+              <img class="seoul-map__district" src="assets/map/districts/yongsan.webp" alt="" data-district="yongsan" style="left:41.598%;top:52.837%;width:19.006%">
+              <img class="seoul-map__district" src="assets/map/districts/jung.webp" alt="" data-district="jung" style="left:46.381%;top:47.316%;width:16.048%">
+              <img class="seoul-map__district" src="assets/map/districts/dongdaemun.webp" alt="" data-district="dongdaemun" style="left:60.667%;top:34.202%;width:14.223%">
+              <img class="seoul-map__district" src="assets/map/districts/jungnang.webp" alt="" data-district="jungnang" style="left:71.492%;top:28.758%;width:13.027%">
+              <img class="seoul-map__district" src="assets/map/districts/seongbuk.webp" alt="" data-district="seongbuk" style="left:48.899%;top:23.850%;width:24.229%">
+              <img class="seoul-map__district" src="assets/map/districts/jongno.webp" alt="" data-district="jongno" style="left:42.605%;top:25.230%;width:19.257%">
+              <img class="seoul-map__district" src="assets/map/districts/seodaemun.webp" alt="" data-district="seodaemun" style="left:32.347%;top:32.822%;width:16.740%">
+              <img class="seoul-map__district" src="assets/map/districts/mapo.webp" alt="" data-district="mapo" style="left:21.020%;top:39.954%;width:26.872%">
+              <img class="seoul-map__district" src="assets/map/districts/eunpyeong.webp" alt="" data-district="eunpyeong" style="left:27.565%;top:15.414%;width:20.831%">
+              <img class="seoul-map__district" src="assets/map/districts/gangbuk.webp" alt="" data-district="gangbuk" style="left:50.472%;top:6.058%;width:17.558%">
+              <img class="seoul-map__district" src="assets/map/districts/dobong.webp" alt="" data-district="dobong" style="left:57.017%;top:0.000%;width:12.649%">
+              <img class="seoul-map__district" src="assets/map/districts/nowon.webp" alt="" data-district="nowon" style="left:65.261%;top:1.994%;width:17.810%">
+              <button class="seoul-map__marker" type="button" style="left:78.420%;top:13.735%"
+                data-name="노원구" data-address="기관명·주소 입력 예정" data-address2="" data-href="#" data-placeholder
+                aria-label="노원구"></button>
+              <button class="seoul-map__marker" type="button" style="left:72.694%;top:44.678%"
+                data-name="동대문구" data-address="기관명·주소 입력 예정" data-address2="" data-href="#" data-placeholder
+                aria-label="동대문구"></button>
+              <button class="seoul-map__marker" type="button" style="left:39.849%;top:48.666%"
+                data-name="서대문구" data-address="기관명·주소 입력 예정" data-address2="" data-href="#" data-placeholder
+                aria-label="서대문구"></button>
+              <button class="seoul-map__marker" type="button" style="left:63.153%;top:51.327%"
+                data-name="성동구" data-address="기관명·주소 입력 예정" data-address2="" data-href="#" data-placeholder
+                aria-label="성동구"></button>
+              <button class="seoul-map__marker" type="button" style="left:93.864%;top:57.086%"
+                data-name="강동구 키움센터" data-address="강동구 동부순환로 323길" data-address2="38-16 205호 건물" data-href="#" data-default
+                aria-label="강동구 키움센터"></button>
+              <button class="seoul-map__marker" type="button" style="left:18.811%;top:64.279%"
+                data-name="양천구" data-address="기관명·주소 입력 예정" data-address2="" data-href="#" data-placeholder
+                aria-label="양천구"></button>
+              <button class="seoul-map__marker" type="button" style="left:57.250%;top:72.362%"
+                data-name="서초구" data-address="기관명·주소 입력 예정" data-address2="" data-href="#" data-placeholder
+                aria-label="서초구"></button>
+              <button class="seoul-map__marker" type="button" style="left:48.162%;top:76.902%"
+                data-name="동작구" data-address="기관명·주소 입력 예정" data-address2="" data-href="#" data-placeholder
+                aria-label="동작구"></button>
+              <button class="seoul-map__marker" type="button" style="left:58.521%;top:79.893%"
+                data-name="서초구" data-address="기관명·주소 입력 예정" data-address2="" data-href="#" data-placeholder
+                aria-label="서초구"></button>
+              </div>
+            </div>
+
+            <div class="map-tooltip" id="map-tooltip" hidden data-map-tooltip>
+              <p class="map-tooltip__name" data-tooltip-name></p>
+              <p class="map-tooltip__address"><span data-tooltip-address></span><br><span data-tooltip-address2></span></p>
+              <a class="map-tooltip__link" href="#" data-tooltip-link aria-label="자세히 보기">
+                <svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="10" fill="#fff"/><path d="M5.2 8.3h5.1V5.4l4.6 4.6-4.6 4.6v-2.9H5.2z" fill="currentColor"/></svg>
+              </a>
+              <svg class="map-tooltip__tail" viewBox="0 0 18 17" aria-hidden="true"><path d="M1.6 0C2 6 1.6 11.5 0 17 7.4 12.6 13.6 6.9 18 0Z" fill="currentColor"/></svg>
+            </div>
+
+            <div class="map-controls">
+              <div class="map-zoom" role="group" aria-label="지도 확대·축소">
+                <button type="button" class="map-zoom__btn" data-zoom="in" aria-label="확대">
+                  <svg viewBox="0 0 12 12" aria-hidden="true"><path d="M6 1v10M1 6h10"/></svg>
+                </button>
+                <span class="map-zoom__divider" aria-hidden="true"></span>
+                <button type="button" class="map-zoom__btn" data-zoom="out" aria-label="축소">
+                  <svg viewBox="0 0 12 12" aria-hidden="true"><path d="M1 6h10"/></svg>
+                </button>
+              </div>
+              <div class="map-scale" aria-hidden="true" data-map-scale>
+                <span class="map-scale__bar" data-scale-bar></span>
+                <span class="map-scale__labels"><span>0</span><span data-scale-label></span></span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="partners" aria-label="함께하는 기관">
+          <div class="partners__track">
+            <ul class="partners__list">
+              <li class="partners__item partners__item--woori-dongne-kium-center"><img src="assets/partners/trimmed/woori-dongne-kium-center.webp" alt="서울특별시 우리동네키움센터"></li>
+              <li class="partners__item partners__item--nanum-plus-c-on"><img src="assets/partners/trimmed/nanum-plus-c-on.webp" alt="나눔플러스 C-ON"></li>
+              <li class="partners__item partners__item--seoul-city-slogan"><img src="assets/partners/trimmed/seoul-city-slogan.webp" alt="동행·매력 특별시 서울"></li>
+              <li class="partners__item partners__item--seoultech"><img src="assets/partners/trimmed/seoultech.webp" alt="서울과학기술대학교"></li>
+              <li class="partners__item partners__item--econow"><img src="assets/partners/trimmed/econow.webp" alt="econow"></li>
+            </ul>
+            <ul class="partners__list" aria-hidden="true">
+              <li class="partners__item partners__item--woori-dongne-kium-center"><img src="assets/partners/trimmed/woori-dongne-kium-center.webp" alt=""></li>
+              <li class="partners__item partners__item--nanum-plus-c-on"><img src="assets/partners/trimmed/nanum-plus-c-on.webp" alt=""></li>
+              <li class="partners__item partners__item--seoul-city-slogan"><img src="assets/partners/trimmed/seoul-city-slogan.webp" alt=""></li>
+              <li class="partners__item partners__item--seoultech"><img src="assets/partners/trimmed/seoultech.webp" alt=""></li>
+              <li class="partners__item partners__item--econow"><img src="assets/partners/trimmed/econow.webp" alt=""></li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+    </main>
+
 
   </div>
 </body>
