@@ -5,13 +5,13 @@
 
 .cases-section {
   --case-w: 224.4px;
-  --case-gap: 22.7px;
+  --case-gap: 18.9px;                /* 카드 3장 + 간격 2칸 = 711px (콘텐츠 폭 855 - 좌우 72) */
   --case-img-h: 174.8px;
   --case-radius: 11px;
   --case-caption: #3E5153;          /* 러프 캡션 색 (초록빛 도는 진회색) */
   --case-placeholder: #D9D9D9;
 
-  padding: 52px 0 64px;
+  padding: 0;
 }
 
 .cases {
@@ -102,9 +102,9 @@
 
 .cases__nav[hidden] { display: none; }
 
-/* 카드 영역 바깥 여백(약 68px)의 가운데 */
-.cases__nav--prev { left: 18px; }
-.cases__nav--next { right: 18px; }
+/* 카드 영역 바깥 여백(72px)의 가운데 */
+.cases__nav--prev { left: 20px; }
+.cases__nav--next { right: 20px; }
 
 .cases__nav svg {
   width: 12px;

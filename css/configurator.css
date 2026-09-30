@@ -4,7 +4,7 @@
    ========================================================================== */
 
 .cfg-section {
-  padding: 57px 0 40px;
+  padding: 0;
 }
 
 .cfg-section .section-sub {
@@ -16,14 +16,15 @@
 .cfg-panel {
   position: relative;
   height: 420px;
-  margin: 41px 78px 0;
+  margin: 41px var(--content-pad-x) 0;
   border-radius: 26px;
   background: var(--color-gray-panel);
 }
 
+/* 패널 폭이 699→711px로 늘어난 만큼 내부 요소를 가운데로 옮긴다 */
 .cfg-panel > * {
   position: absolute;
-  margin: 0;
+  margin: 0 0 0 6px;
 }
 
 /* ---- 설치 가능 영역 + 세면대 도식 ------------------------------------- */
@@ -257,6 +258,7 @@
 
 /* ---- 상태 메시지 (CTA 아래, 평소엔 비어 있음) ------------------------- */
 .cfg-message {
+  margin: 0;
   left: 0;
   right: 0;
   top: 395px;

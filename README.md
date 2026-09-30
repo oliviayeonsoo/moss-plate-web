@@ -126,3 +126,15 @@ MossConfigurator.onChange((values, result) => { /* 필요하면 추가 연동 */
   `#`이면 연결 전이다. `email`은 `mailto:`로 연결되고 화면 표시도 이 값을 따른다.
   `http(s)://` 주소는 새 탭으로 열린다.
 - `images.teamPhoto`: S5 팀 사진 경로. 파일이 없거나 불러오지 못하면 사진 없이 배너만 보인다.
+
+## 공통 간격 규칙
+
+`css/tokens.css`의 값 하나로 우측 콘텐츠 전체 간격을 관리한다.
+
+| 토큰 | 값 | 적용 |
+|---|---|---|
+| `--section-gap` | 120px | 섹션(푸터 포함) 사이 간격. `base.css`의 `.content > * + *` 한 곳에서만 만든다 |
+| `--content-pad-x` | 72px | S1·S3·S4 좌우 여백 |
+| `--banner-pad-x` | 48px | S5 팀 배너만 러프대로 더 넓게 (72로 바꾸면 다른 섹션과 같아진다) |
+
+새 섹션을 추가할 때는 섹션 자체에 위아래 여백을 주지 않고, `<main class="content">` 안에 순서대로 넣으면 간격이 자동으로 맞는다.

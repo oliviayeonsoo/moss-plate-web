@@ -4,11 +4,11 @@
    ========================================================================== */
 
 .map-section {
-  padding: 81px 0 64px;
+  padding: 81px 0 0;
 }
 
 .map-section__inner {
-  padding: 0 72px;
+  padding: 0 var(--content-pad-x);
 }
 
 /* ---- 지도 패널 (모눈종이) --------------------------------------------- */
@@ -252,7 +252,7 @@
 
 /* ---- 파트너 로고 컨베이어 --------------------------------------------- */
 .partners {
-  margin: 79px 72px 0;
+  margin: 79px var(--content-pad-x) 0;
   overflow: hidden;
   -webkit-mask-image: linear-gradient(to right, transparent, #000 40px, #000 calc(100% - 40px), transparent);
           mask-image: linear-gradient(to right, transparent, #000 40px, #000 calc(100% - 40px), transparent);
