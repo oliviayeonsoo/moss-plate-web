@@ -16,13 +16,14 @@ python3 -m http.server 8080
 ```
 index.html
 css/
+  fonts.css    @font-face (프로젝트에 포함된 웹폰트)
   tokens.css   색·폰트·레이아웃 토큰 (폰트 교체는 여기서만)
   base.css     reset + 좌측 고정 / 우측 스크롤 2단 뼈대
   hero.css     S0. Hero
 assets/
   icons/       Hero 효과 카드 아이콘 (손그림, 투명 배경 원본)
   partners/    파트너 로고 원본 (S2에서 사용 예정)
-fonts/         웹폰트 파일을 둘 자리 (현재 비어 있음)
+fonts/         웹폰트 파일 (Y페어링체 Bold woff2)
 ```
 
 ## 섹션 진행 현황
@@ -45,7 +46,8 @@ fonts/         웹폰트 파일을 둘 자리 (현재 비어 있음)
 | 부제·CTA·카드 문구·섹션 헤드라인 | `--font-display` | Y Pairing Font Bold |
 | 소속 표기·본문·라벨·링크 | `--font-body` | Pretendard Regular |
 
-폰트는 PC에 설치된 폰트를 family 이름으로 불러온다. 이름이 다르거나 폰트를 바꾸려면
-`css/tokens.css`의 해당 스택 맨 앞 이름만 수정하면 된다. 배포용 웹폰트 파일은 `fonts/`에 두고
-`@font-face`를 추가한다.
+Y페어링체는 `fonts/`의 파일을 `css/fonts.css`에서 직접 연결한다. 원본 TTF의 내부 family명이
+`YPairingFont  Bd`이고 굵기값이 400이라, 설치 폰트 이름에 기대면 Bold가 적용되지 않기 때문이다.
+Y Clover와 Pretendard는 아직 PC 설치 폰트를 이름으로 불러온다. 폰트를 바꾸려면
+`css/tokens.css`의 해당 스택만 수정한다.
 

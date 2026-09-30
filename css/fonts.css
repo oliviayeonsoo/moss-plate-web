@@ -1,0 +1,15 @@
+/* ==========================================================================
+   Web fonts — 프로젝트에 포함된 폰트 파일
+   PC 설치 여부나 파일 내부 이름에 상관없이 같은 결과가 나오도록
+   파일을 직접 연결한다. 이름은 tokens.css의 폰트 스택에서 쓴다.
+   ========================================================================== */
+
+/* Y페어링체 Bold — 파일 내부 family명이 "YPairingFont  Bd", 굵기값 400이라
+   설치 폰트 이름으로는 Bold가 선택되지 않는다. weight 700으로 명시한다. */
+@font-face {
+  font-family: "Y Pairing";
+  src: url("../fonts/YPairingFont-Bold.woff2") format("woff2");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
