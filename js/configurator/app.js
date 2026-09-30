@@ -34,6 +34,7 @@ function init(form) {
 
   let ready = false;
   let result = null;
+  let note = '';          // 엔진 로딩·다운로드 실패처럼 입력과 무관한 문구 (있으면 우선 표시)
 
   /* ---- 입력칸 ---------------------------------------------------------- */
   // 숫자와 소수점 하나, 소수 한 자리까지
@@ -89,9 +90,19 @@ function init(form) {
     }
   }
 
+  // 버튼 아래 한 줄: 버튼이 왜 막혔는지 (칸 순서상 첫 에러, 여러 칸이면 개수도)
+  function status(r) {
+    if (note) { general.textContent = note; return; }
+    const bad = fields.filter(f => r.errors.some(x => x.field === f.key));
+    if (!bad.length) { general.textContent = ''; return; }
+    const first = r.errors.find(x => x.field === bad[0].key).message;
+    general.textContent = bad.length > 1 ? `${first} (확인할 칸 ${bad.length}개)` : first;
+  }
+
   function update() {
     result = validate(values());
     show(result);
+    status(result);
     button.disabled = !ready || !result.ok;
   }
 
@@ -103,6 +114,7 @@ function init(form) {
       const clean = sanitize(f.input.value);
       if (clean !== f.input.value) f.input.value = clean;
       fit(f.input);
+      if (ready) note = '';                                   // 다시 입력하면 이전 다운로드 실패 문구는 지운다
       update();
     });
   }
@@ -115,10 +127,11 @@ function init(form) {
     try {
       const pieces = buildPieces(result.params);
       downloadAll(result.params, pieces);
-      general.textContent = '';
+      note = '';
     } catch (err) {
-      general.textContent = `도안을 만들지 못했어요: ${err.message}`;
+      note = `도안을 만들지 못했어요: ${err.message}`;
     }
+    status(result);
   });
 
   /* ---- 엔진 준비 (앱 시작 시 1회) --------------------------------------- */
@@ -127,6 +140,6 @@ function init(form) {
   update();
   initGeometry()
     .then(() => { ready = true; })
-    .catch(err => { general.textContent = `도안 생성 엔진을 불러오지 못했어요: ${err.message}`; })
+    .catch(err => { note = `도안 생성 엔진을 불러오지 못했어요: ${err.message}`; })
     .finally(() => { button.removeAttribute('aria-busy'); update(); });
 }
