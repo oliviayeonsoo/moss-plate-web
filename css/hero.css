@@ -1,0 +1,157 @@
+/* ==========================================================================
+   S0. Hero — 좌측 고정 민트 패널
+   ========================================================================== */
+
+.hero {
+  position: sticky;
+  top: 0;
+  align-self: start;
+  height: 100vh;
+  overflow-y: auto;
+  background: var(--color-mint-bg);
+}
+
+.hero__inner {
+  width: calc(var(--aside-pad-left) + var(--aside-content));
+  padding: 32px 0 48px var(--aside-pad-left);
+}
+
+/* ---- 상단 소속 표기 ---------------------------------------------------- */
+.hero__eyebrow {
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1.4;
+  color: var(--color-cyan-text);
+}
+
+/* ---- 부제 + 로고타입 --------------------------------------------------- */
+.hero__tagline {
+  margin-top: 58px;
+  font-size: 18px;
+  font-weight: 700;
+  line-height: 1.4;
+  color: var(--color-cyan);
+}
+
+.hero__logo {
+  margin-top: 10px;
+  font-family: var(--font-logo);
+  font-size: 56px;
+  font-weight: 400;
+  line-height: 1.1;
+  letter-spacing: 0;
+  white-space: nowrap;
+}
+
+.hero__logo-moss  { color: var(--color-cyan); }
+.hero__logo-plate { color: var(--color-orange); }
+
+/* ---- 소개 문단 --------------------------------------------------------- */
+.hero__desc {
+  margin-top: 28px;
+  font-size: 13px;
+  font-weight: 400;
+  line-height: 1.75;
+  color: var(--color-ink-sub);
+}
+
+/* ---- 효과 수치 --------------------------------------------------------- */
+.hero__impact {
+  margin-top: 60px;
+}
+
+.hero__impact-label {
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1.4;
+  color: var(--color-cyan-text);
+}
+
+.impact-cards {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.impact-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  height: 134px;
+  padding: 16px 8px;
+  background: var(--color-white);
+  border-radius: var(--radius-xs);
+  text-align: center;
+}
+
+.impact-card__lead,
+.impact-card__tail {
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1.45;
+  color: var(--color-ink-sub);
+}
+
+.impact-card__value {
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 1.45;
+  color: var(--color-ink);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---- CTA -------------------------------------------------------------- */
+.hero__cta {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 48px;
+  margin-top: 20px;
+  background: var(--color-orange);
+  border-radius: var(--radius-xs);
+  color: var(--color-white);
+  font-size: 14px;
+  font-weight: 700;
+  text-decoration: none;
+  transition: background-color var(--dur) var(--ease),
+              transform var(--dur) var(--ease);
+}
+
+.hero__cta:hover  { background: var(--color-orange-hover); }
+.hero__cta:active { background: var(--color-orange-active); transform: translateY(1px); }
+
+.hero__cta:focus-visible {
+  outline: 2px solid var(--color-orange);
+  outline-offset: 3px;
+}
+
+/* ---- 하단 텍스트 링크 -------------------------------------------------- */
+.hero__links {
+  display: flex;
+  gap: 16px;
+  margin-top: 22px;
+}
+
+.hero__links a {
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.4;
+  letter-spacing: 0;
+  color: var(--color-cyan-text);
+  text-decoration: none;
+  text-underline-offset: 4px;
+}
+
+.hero__links a:hover {
+  text-decoration: underline;
+}
+
+.hero__links a:focus-visible {
+  outline: 2px solid var(--color-cyan);
+  outline-offset: 2px;
+  border-radius: 2px;
+}

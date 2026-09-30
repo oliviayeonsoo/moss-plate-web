@@ -1,0 +1,45 @@
+/* ==========================================================================
+   Design tokens — 이끼 플레이트
+   Figma 러프(source of truth)에서 추출한 값. 폰트·색은 여기서만 바꾼다.
+   ========================================================================== */
+
+:root {
+  /* ---- Brand color ---------------------------------------------------- */
+  --color-orange: #FF7300;        /* 행동·강조: CTA, 마커, 경고, 라벨 */
+  --color-orange-hover: #EB6A00;
+  --color-orange-active: #D96200;
+  --color-cyan: #00CBD6;          /* 브랜드·자연·입력: 키워드, 링크, 입력 칩 */
+  --color-cyan-text: var(--color-cyan); /* 작은 민트 텍스트 전용 (대비 조정용 슬롯) */
+
+  /* ---- Surface -------------------------------------------------------- */
+  --color-mint-bg: #D5F0F0;       /* 좌측 Hero 패널 배경 (러프 샘플) */
+  --color-white: #FFFFFF;
+  --color-gray-panel: #EFEFEF;    /* 컨피규레이터 패널 (S3) */
+  --color-gray-footer: #EEEEEE;   /* 푸터 (S6) */
+
+  /* ---- Text ----------------------------------------------------------- */
+  --color-ink: #222222;
+  --color-ink-sub: #4F4F4F;
+
+  /* ---- Typography ------------------------------------------------------
+     미확정 폰트는 아래 스택만 바꾸면 전체에 반영된다.
+     설치된 폰트의 정확한 family 이름을 맨 앞에 두면 된다.            */
+  --font-logo: "Y Clover", "YClover", "Y클로버", "Pretendard", sans-serif;
+  --font-display: "Y Pairing Font", "Y Pairing", "YPairing", "Y페어링", "Pretendard", sans-serif;
+  --font-body: "Pretendard", "Pretendard Variable", -apple-system, BlinkMacSystemFont,
+               "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", sans-serif;
+
+  --tracking-ko: -0.02em;         /* 한글 기본 자간 */
+
+  /* ---- Layout (1440 desktop 기준) ------------------------------------- */
+  --aside-width: 585px;           /* 러프 좌측 패널 비율 40.6% × 1440 */
+  --aside-pad-left: 46px;
+  --aside-content: 480px;         /* 카드 3열 + CTA 폭 */
+
+  /* ---- Shape ---------------------------------------------------------- */
+  --radius-xs: 4px;               /* 수치 카드, 사각 버튼 */
+
+  /* ---- Motion --------------------------------------------------------- */
+  --ease: cubic-bezier(0.2, 0.7, 0.3, 1);
+  --dur: 180ms;
+}

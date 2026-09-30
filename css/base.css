@@ -1,0 +1,48 @@
+/* ==========================================================================
+   Base — reset + 페이지 뼈대 (좌측 고정 Hero / 우측 스크롤 콘텐츠)
+   ========================================================================== */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  min-width: 1440px;              /* 현재는 데스크톱 전용 */
+  background: var(--color-white);
+  color: var(--color-ink);
+  font-family: var(--font-body);
+  letter-spacing: var(--tracking-ko);
+  word-break: keep-all;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3, p, ul {
+  margin: 0;
+}
+
+ul {
+  padding: 0;
+  list-style: none;
+}
+
+a {
+  color: inherit;
+}
+
+.page {
+  display: grid;
+  grid-template-columns: var(--aside-width) 1fr;
+  min-height: 100vh;
+}
+
+.content {
+  min-height: 100vh;
+  background: var(--color-white);
+}
