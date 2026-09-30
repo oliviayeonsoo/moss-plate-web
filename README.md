@@ -22,8 +22,10 @@ css/
   hero.css     S0. Hero
   section.css  우측 섹션 공통 제목/부제
   map.css      S1. 서울 지도 + 파트너 로고 컨베이어
+  configurator.css  S3. 맞춤 도안 만들기
 js/
   seoul-map.js 지도 확대/축소·드래그, 마커 툴팁, 축척
+  configurator/     S3 (아래 "맞춤 도안 configurator" 참고)
 assets/
   icons/       Hero 효과 카드 아이콘 (손그림, 투명 배경 원본)
   map/districts/  서울 25개 구 크레용 지도 (무손실 webp, 구별 레이어)
@@ -39,7 +41,7 @@ fonts/         웹폰트 파일 (Y Clover Bold, Y페어링체 Regular·Bold, Pre
 | S0 | Hero (좌측 고정 패널) | 완료 |
 | S1 | 서울 지도 + 파트너 로고 컨베이어 | 완료 (기관 데이터 입력 필요) |
 | S2 | 파트너 로고 | S1에 포함 |
-| S3 | 맞춤 도안 컨피규레이터 | 대기 |
+| S3 | 맞춤 도안 컨피규레이터 | UI 완료 (STL 모듈 연결 대기) |
 | S4 | 사례 갤러리 | 대기 |
 | S5 | 팀 소개 배너 | 대기 |
 | S6 | 푸터 | 대기 |
@@ -71,3 +73,29 @@ PC 설치 여부와 관계없이 같은 결과가 나온다. Pretendard Thin은 
 | `data-placeholder` | 정보가 아직 없는 마커 표시용. 정보를 넣으면 지운다 |
 
 마커 위치(`left`/`top` %)는 지도 원본 좌표 기준이라 확대해도 구 위에 고정된다.
+
+## 맞춤 도안 configurator (S3)
+
+UI만 구현되어 있고 3D/STL 생성은 외부 모듈을 붙여서 쓴다.
+
+| 파일 | 역할 |
+|---|---|
+| `js/configurator/config.js` | 입력 필드와 검증 규칙 (데이터) |
+| `js/configurator/store.js` | 입력값 상태 (`{ width, height, backGap, sideGap }`, cm, 미입력은 `null`) |
+| `js/configurator/validate.js` | 검증 순수 함수 → `{ valid, errors }` |
+| `js/configurator/inputs.js` | 입력 칩 ↔ state 연결 |
+| `js/configurator/feedback.js` | 검증 결과 표시 |
+| `js/configurator/preview.js` | 3D preview 자리 (adapter를 받으면 표시) |
+| `js/configurator/actions.js` | `stl 파일 생성하기` 버튼 |
+| `js/configurator/index.js` | 위 모듈 연결 + 공개 API `window.MossConfigurator` |
+
+STL 모듈 연결 예시 (`index.js` 뒤에 로드되는 새 스크립트):
+
+```js
+MossConfigurator.setPreview({
+  mount(el) { /* el에 three.js 캔버스 등을 붙인다 */ },
+  update(values, result) { if (result.valid) rebuildMesh(values); }
+});
+MossConfigurator.onGenerate(values => exportStl(values)); // Promise면 끝날 때까지 버튼 busy
+MossConfigurator.onChange((values, result) => { /* 필요하면 추가 연동 */ });
+```

@@ -24,3 +24,16 @@
   line-height: 1.4;
   color: var(--color-ink);
 }
+
+/* 가운데 정렬 변형 (S3~) */
+.section-title--center,
+.section-sub--center {
+  padding-left: 0;
+  text-align: center;
+}
+
+/* 부제를 Y페어링체 Regular로 쓰는 변형 (S3) */
+.section-sub--display {
+  font-family: var(--font-display);
+  font-weight: 400;
+}
