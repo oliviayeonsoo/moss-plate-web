@@ -50,6 +50,7 @@ function init(form) {
   };
 
   // 칩 폭(세로 칩은 높이)을 내용 길이에 맞춘다 — 러프 화면의 기존 동작
+  // (offsetWidth/Height: 768~1439px의 화면 축소(zoom)와 무관한 CSS px 값)
   const ruler = document.createElement('span');
   ruler.setAttribute('aria-hidden', 'true');
   ruler.style.cssText = 'position:absolute;visibility:hidden;white-space:pre;left:-9999px;top:0';
@@ -60,9 +61,8 @@ function init(form) {
     ruler.style.letterSpacing = cs.letterSpacing;
     ruler.style.writingMode = cs.writingMode;
     ruler.textContent = el.value || el.placeholder;
-    const r = ruler.getBoundingClientRect();
-    if (cs.writingMode.startsWith('vertical')) el.style.height = Math.ceil(r.height) + 2 + 'px';
-    else el.style.width = Math.ceil(r.width) + 2 + 'px';
+    if (cs.writingMode.startsWith('vertical')) el.style.height = ruler.offsetHeight + 3 + 'px';
+    else el.style.width = ruler.offsetWidth + 3 + 'px';
   };
 
   const values = () => Object.fromEntries(fields.map(f => [f.key, toMm(f.input.value, f.scale)]));

@@ -43,8 +43,10 @@
 .seoul-map__viewport {
   position: absolute;
   inset: 0;
-  touch-action: none;
+  touch-action: pan-y pinch-zoom;       /* 확대 전: 터치로 지도 위를 밀어도 페이지가 스크롤된다 */
 }
+
+.seoul-map[data-zoomed] .seoul-map__viewport { touch-action: none; }   /* 확대 후: 지도 드래그 */
 
 .seoul-map[data-zoomed] .seoul-map__viewport         { cursor: grab; }
 .seoul-map[data-dragging] .seoul-map__viewport       { cursor: grabbing; }

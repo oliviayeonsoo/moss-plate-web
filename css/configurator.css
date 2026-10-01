@@ -213,6 +213,9 @@
   transform: translate(-50%, -50%);
 }
 
+/* ---- 도식 위 입력칸 번호 (모바일 전용, css/mobile.css) ---------------- */
+.cfg-pin { display: none; }
+
 /* ---- 3D preview 자리 (외부 모듈 연결 전까지 숨김) ---------------------- */
 .cfg-preview {
   left: 112.2px;

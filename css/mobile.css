@@ -1,0 +1,386 @@
+/* ==========================================================================
+   모바일 (767px 이하) — 한 줄 세로 배치
+   데스크톱(1440) 화면은 각 섹션 CSS 그대로이고, 이 파일은 767px 이하에서만 덮어쓴다.
+   768~1439px는 데스크톱 화면을 비율 그대로 축소한다 (css/base.css, js/site/fit.js).
+   ========================================================================== */
+
+@media (max-width: 767px) {
+
+  :root {
+    --section-gap: 72px;
+    --content-pad-x: 16px;
+    --banner-pad-x: 16px;
+  }
+
+  body { min-width: 0; }
+
+  /* ---- 뼈대: Hero가 맨 위 첫 화면, 그 아래로 섹션이 이어진다 ------------- */
+  .page { display: block; }
+  .content { min-height: 0; }
+
+  /* ---- 섹션 공통 제목 ---------------------------------------------------- */
+  .section-title {
+    padding-left: 0;
+    font-size: 20px;
+    white-space: normal;
+  }
+
+  .section-sub {
+    padding-left: 0;
+    font-size: 14px;
+  }
+
+  /* ==== S0. Hero ======================================================== */
+  .hero {
+    --hero-logo: 42px;
+    --hero-tagline: 17px;
+    --hero-card-sm: 11px;
+    --hero-card-lg: 13px;
+    --hero-icon: 40px;
+
+    position: static;
+    height: auto;
+    overflow: visible;
+  }
+
+  .hero__inner {
+    width: auto;
+    padding: 24px var(--content-pad-x) 40px;
+  }
+
+  .hero__tagline { margin-top: 44px; }
+  .hero__desc    { margin-top: 22px; }
+  .hero__desc br { display: none; }     /* 좁은 폭에서는 문단이 자연스럽게 흐르게 */
+  .hero__impact  { margin-top: 40px; }
+
+  .impact-cards { gap: 8px; }
+
+  .impact-card {
+    min-height: 0;
+    padding: 12px 4px 14px;
+  }
+
+  /* ==== S1. 서울 지도 =================================================== */
+  .map-section { padding-top: 48px; }
+
+  .map-section__inner { container-type: inline-size; }
+
+  /* 지도 높이 = 스테이지(폭 92%, 러프 비율 470.5:386) + 위 16 + 아래 컨트롤 자리 56 */
+  .seoul-map {
+    height: calc(100cqw * 0.92 * 386 / 470.5 + 72px);
+    margin-top: 16px;
+    border-radius: 18px;
+  }
+
+  .seoul-map__stage {
+    left: 4%;
+    top: 16px;
+    width: 92%;
+    height: auto;
+    aspect-ratio: 470.5 / 386;
+  }
+
+  .map-controls {
+    left: 16px;
+    bottom: 16px;
+  }
+
+  .map-tooltip { padding: 14px 32px 12px 16px; }
+
+  .partners { margin-top: 48px; }
+
+  .partners__list {
+    gap: 40px;
+    padding-right: 40px;
+  }
+
+  /* ==== S3. 맞춤 도안 만들기 ============================================
+     위: 세면대 도식을 패널 폭에 맞춰 축소하고, 입력칸 자리에 번호만 표시
+     아래: 같은 입력칸 4개를 번호와 함께 세로 목록으로 (문구·버튼은 그 아래)
+     도식 좌표는 데스크톱 패널 좌표(px)에서 (56, 60)을 원점으로 480 × 266 영역을 잘라
+     --u(= 패널 안쪽 폭 / 480)배 한 값이다. */
+  .cfg-section .section-sub { font-size: 14px; }
+
+  .cfg-panel {
+    --u: calc(100cqw / 480);
+    --pad: 16px;
+
+    container-type: inline-size;
+    display: flex;
+    flex-direction: column;
+    height: auto;
+    margin-top: 24px;
+    padding: var(--pad) var(--pad) 20px;
+    border-radius: 20px;
+  }
+
+  /* 도식 자리 (도식 요소는 이 위에 절대 위치) */
+  .cfg-panel::before {
+    content: "";
+    height: calc(266 * var(--u));
+    margin-bottom: 24px;
+  }
+
+  .cfg-panel > * { margin: 0; }
+
+  /* ---- 도식 ---- */
+  .cfg-area {
+    left: calc(var(--pad) + 62.2 * var(--u));
+    top: calc(var(--pad) + 47.5 * var(--u));
+    width: calc(385.2 * var(--u));
+  }
+
+  .cfg-dim svg {
+    stroke-width: 1.5;
+  }
+
+  .cfg-dim svg * { vector-effect: non-scaling-stroke; }
+
+  .cfg-dim--width-l  { left: calc(var(--pad) + 61.4 * var(--u));  top: calc(var(--pad) + 12 * var(--u)); }
+  .cfg-dim--width-r  { left: calc(var(--pad) + 320.9 * var(--u)); top: calc(var(--pad) + 12 * var(--u)); }
+  .cfg-dim--height-u { left: calc(var(--pad) + 10 * var(--u));    top: calc(var(--pad) + 46.6 * var(--u)); }
+  .cfg-dim--height-d { left: calc(var(--pad) + 10 * var(--u));    top: calc(var(--pad) + 193.3 * var(--u)); }
+  .cfg-dim--back     { left: calc(var(--pad) + 351.6 * var(--u)); top: calc(var(--pad) + 53 * var(--u)); }
+  .cfg-dim--side     { left: calc(var(--pad) + 361.9 * var(--u)); top: calc(var(--pad) + 239.6 * var(--u)); }
+
+  .cfg-dim--width-l svg  { width: calc(137.2 * var(--u)); height: calc(16 * var(--u)); }
+  .cfg-dim--width-r svg  { width: calc(127.4 * var(--u)); height: calc(16 * var(--u)); }
+  .cfg-dim--height-u svg { width: calc(16 * var(--u));    height: calc(30.8 * var(--u)); }
+  .cfg-dim--height-d svg { width: calc(16 * var(--u));    height: calc(30.7 * var(--u)); }
+  .cfg-dim--back svg     { width: calc(16 * var(--u));    height: calc(31.7 * var(--u)); }
+  .cfg-dim--side svg     { width: calc(86.4 * var(--u));  height: calc(16 * var(--u)); }
+
+  .cfg-legend {
+    left: calc(var(--pad) + 62.2 * var(--u));
+    top: calc(var(--pad) + 236.4 * var(--u));
+    gap: 8px;
+    font-size: 12px;
+    line-height: 16px;
+  }
+
+  .cfg-legend__swatch {
+    width: 16px;
+    height: 16px;
+  }
+
+  /* 번호 (도식 위 핀 + 목록 앞 번호 같은 모양) */
+  .cfg-pin,
+  .cfg-chip::before {
+    display: grid;
+    place-items: center;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: var(--color-cyan);
+    color: var(--color-white);
+    font-family: var(--font-display);
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 1;
+    letter-spacing: 0;
+    transition: background-color var(--dur) var(--ease);
+  }
+
+  .cfg-pin { transform: translate(-50%, -50%); }
+
+  .cfg-pin--width { left: calc(var(--pad) + 260.6 * var(--u)); top: calc(var(--pad) + 20 * var(--u)); }
+  .cfg-pin--depth { left: calc(var(--pad) + 18 * var(--u));    top: calc(var(--pad) + 135 * var(--u)); }
+  .cfg-pin--back  { left: calc(var(--pad) + 390 * var(--u));   top: calc(var(--pad) + 69 * var(--u)); }
+  .cfg-pin--side  { left: calc(var(--pad) + 468 * var(--u));   top: calc(var(--pad) + 247.6 * var(--u)); }
+
+  /* 해당 칸이 규칙에 어긋나면 번호도 주황 */
+  .cfg-panel:has([data-cfg-chip="width"][data-invalid])   .cfg-pin--width,
+  .cfg-panel:has([data-cfg-chip="depth"][data-invalid])   .cfg-pin--depth,
+  .cfg-panel:has([data-cfg-chip="rearGap"][data-invalid]) .cfg-pin--back,
+  .cfg-panel:has([data-cfg-chip="sideGap"][data-invalid]) .cfg-pin--side,
+  .cfg-chip[data-invalid]::before {
+    background: var(--color-orange);
+  }
+
+  /* ---- 입력 목록: [번호] [칸 이름] [민트 입력칸 cm] ---- */
+  .cfg-chip,
+  .cfg-chip--vertical {
+    position: static;
+    display: grid;
+    grid-template-columns: 22px minmax(0, 1fr) 120px;
+    align-items: center;
+    column-gap: 10px;
+    width: auto;
+    height: auto;
+    padding: 0;
+    background: none;
+    color: var(--color-ink);
+    cursor: default;
+  }
+
+  .cfg-chip + .cfg-chip { margin-top: 14px; }   /* 2~4번 칸 (문구는 칸 바로 아래 6px) */
+
+  .cfg-chip--width::before { content: "1"; }
+  .cfg-chip--height::before { content: "2"; }
+  .cfg-chip--back::before  { content: "3"; }
+  .cfg-chip--side::before  { content: "4"; }
+
+  /* 데스크톱에서는 화면에 안 보이는 칸 이름을 목록 이름으로 보여 준다 */
+  .cfg-chip .sr-only {
+    position: static !important;
+    width: auto;
+    height: auto;
+    overflow: visible;
+    clip: auto;
+    white-space: normal;
+    font-size: 14px;
+    line-height: 1.35;
+  }
+
+  .cfg-chip__rotate { display: contents; }
+
+  .cfg-panel .cfg-chip__input,
+  .cfg-panel .cfg-chip__rotate .cfg-chip__input {
+    grid-column: 3;
+    grid-row: 1;
+    width: 100% !important;              /* 데스크톱용 글자 길이 맞춤(JS 인라인 값)을 덮는다 */
+    height: 40px !important;
+    min-height: 0;
+    padding: 0 30px 0 8px;
+    background: var(--color-cyan);
+    color: var(--color-white);
+    font-size: 16px;                     /* 16px 미만이면 iOS가 입력 시 화면을 확대한다 */
+    writing-mode: horizontal-tb;
+    transition: background-color var(--dur) var(--ease);
+  }
+
+  .cfg-chip[data-invalid] { background: none; }
+  .cfg-chip[data-invalid] .cfg-chip__input { background: var(--color-orange); }
+
+  .cfg-chip:focus-within { box-shadow: none; }
+  .cfg-chip__input:focus { box-shadow: inset 0 0 0 2px var(--color-white); }
+
+  .cfg-chip__unit,
+  .cfg-chip--vertical .cfg-chip__unit {
+    grid-column: 3;
+    grid-row: 1;
+    justify-self: end;
+    margin: 0 12px 0 0;
+    color: var(--color-white);
+    font-size: 12px;
+    pointer-events: none;
+  }
+
+  /* ---- 칸별 문구: 해당 칸 바로 아래 ---- */
+  .cfg-chip--width         { order: 1; }
+  .cfg-field-msg--width    { order: 2; }
+  .cfg-chip--height        { order: 3; }
+  .cfg-field-msg--depth    { order: 4; }
+  .cfg-chip--back          { order: 5; }
+  .cfg-warn--back          { order: 6; }
+  .cfg-chip--side          { order: 7; }
+  .cfg-warn--side          { order: 8; }
+  .cfg-cta                 { order: 9; }
+  .cfg-message             { order: 10; }
+
+  .cfg-field-msg,
+  .cfg-field-msg--width,
+  .cfg-field-msg--depth {
+    position: static;
+    width: auto;
+    margin-top: 6px;
+    padding-left: 32px;
+    font-size: 12px;
+    text-align: left;
+    transform: none;
+  }
+
+  .cfg-warn {
+    position: static;
+    display: flex;
+    align-items: flex-start;
+    gap: 6px;
+    margin-top: 6px;
+    padding-left: 32px;
+  }
+
+  .cfg-warn__icon {
+    flex-shrink: 0;
+    width: 15px;
+    height: 13.5px;
+    margin: 2px 0 0;
+  }
+
+  .cfg-panel .cfg-warn__text,
+  .cfg-panel .cfg-warn[data-msg] .cfg-warn__text {
+    position: static;
+    width: auto;
+    margin: 0;
+    font-size: 12px;
+    white-space: normal;
+  }
+
+  /* 안내 문구 4줄 → 2줄 ("…띄워주세요" / "공간이 없는 경우 0으로…") */
+  .cfg-warn__text br:nth-of-type(odd) { display: none; }
+
+  /* ---- 버튼 + 버튼 아래 한 줄 ---- */
+  .cfg-cta {
+    position: static;
+    width: 100%;
+    height: 44px;
+    margin-top: 24px;
+    border-radius: 22px;
+  }
+
+  .cfg-message {
+    position: static;
+    margin-top: 10px;
+    font-size: 12px;
+  }
+
+  /* ==== S4. 사례 갤러리: 한 화면에 1장 ================================== */
+  .cases-section {
+    --cases-visible: 1;
+    --case-gap: 16px;
+    --nav-room: 48px;                    /* 카드 좌우 버튼 자리 */
+  }
+
+  .cases {
+    container-type: inline-size;
+    margin-top: 24px;
+  }
+
+  .cases__viewport { width: calc(100% - var(--nav-room) * 2); }
+
+  .case-card { flex-basis: 100%; }
+
+  .case-card__media {
+    height: auto;
+    aspect-ratio: 224.4 / 174.8;
+  }
+
+  .case-card__title { margin-top: 14px; }
+
+  .cases__nav { top: calc((100cqw - var(--nav-room) * 2) * 174.8 / 224.4 / 2); }
+  .cases__nav--prev { left: 8px; }
+  .cases__nav--next { right: 8px; }
+
+  /* ==== S5. 팀 소개 배너 ================================================ */
+  .team-banner { height: 280px; }
+
+  /* 좁은 배너에서는 사진 속 인물이 아래 절반을 채워서, 문구를 위쪽 빈 격자 자리에 둔다 */
+  .team-banner__content {
+    left: 20px;
+    top: 24px;
+  }
+
+  .team-banner__title {
+    font-size: 24px;
+    line-height: 32px;
+  }
+
+  .team-banner__cta { margin-top: 14px; }
+
+  /* ==== S6. 푸터 ======================================================== */
+  .site-footer__inner {
+    justify-content: flex-start;
+    gap: 40px;
+    height: auto;
+    padding: 32px var(--content-pad-x) 28px;
+  }
+}

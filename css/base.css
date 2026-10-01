@@ -14,7 +14,7 @@ html {
 
 body {
   margin: 0;
-  min-width: 1440px;              /* 현재는 데스크톱 전용 */
+  min-width: 1440px;              /* JS 없이 열면 데스크톱 화면 + 가로 스크롤 (fit.js가 풀어 준다) */
   background: var(--color-white);
   color: var(--color-ink);
   font-family: var(--font-body);
@@ -50,4 +50,20 @@ a {
 /* 섹션(푸터 포함) 사이 간격 */
 .content > * + * {
   margin-top: var(--section-gap);
+}
+
+/* ---- 768~1439px: 1440 데스크톱 화면을 비율 그대로 축소 ---------------------
+   js/site/fit.js가 html에 data-fit과 --fit(= 화면 폭 / 1440)을 넣는다.
+   zoom 안에서는 100vh도 함께 줄어들어서 Hero 높이는 --fit으로 나눠 되돌린다. */
+html[data-fit] body {
+  min-width: 0;
+}
+
+html[data-fit] .page {
+  width: 1440px;
+  zoom: var(--fit);
+}
+
+html[data-fit] .hero {
+  height: calc(100vh / var(--fit));
 }

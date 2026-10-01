@@ -41,6 +41,13 @@
   /* ---- 확대/이동 -------------------------------------------------------- */
   function z() { return ZOOMS[zi]; }
 
+  // 화면 축소 배율 (768~1439px에서 페이지 전체에 zoom이 걸린다, js/site/fit.js).
+  // 마우스 좌표·getBoundingClientRect는 축소된 값이라 CSS px로 되돌릴 때 나눈다.
+  function pageZoom() {
+    var w = root.offsetWidth;
+    return w ? root.getBoundingClientRect().width / w : 1;
+  }
+
   function clampPan() {
     var w = stage.offsetWidth, h = stage.offsetHeight;
     var mx = (w * (z() - 1)) / 2 + 40;
@@ -76,14 +83,14 @@
   var drag = null;
   viewport.addEventListener('pointerdown', function (e) {
     if (z() === 1 || e.target.closest('.seoul-map__marker')) return;
-    drag = { x: e.clientX, y: e.clientY, tx: tx, ty: ty };
+    drag = { x: e.clientX, y: e.clientY, tx: tx, ty: ty, k: pageZoom() };
     viewport.setPointerCapture(e.pointerId);
     root.setAttribute('data-dragging', '');
   });
   viewport.addEventListener('pointermove', function (e) {
     if (!drag) return;
-    tx = drag.tx + (e.clientX - drag.x);
-    ty = drag.ty + (e.clientY - drag.y);
+    tx = drag.tx + (e.clientX - drag.x) / drag.k;
+    ty = drag.ty + (e.clientY - drag.y) / drag.k;
     clampPan();
     stage.style.transform = 'translate(' + tx + 'px,' + ty + 'px) scale(' + z() + ')';
     placeTooltip();
@@ -125,8 +132,9 @@
 
     var box = root.getBoundingClientRect();
     var r = m.getBoundingClientRect();
-    var mx = r.left + r.width / 2 - box.left - root.clientLeft;
-    var my = r.top + r.height / 2 - box.top - root.clientTop;
+    var k = pageZoom();
+    var mx = (r.left + r.width / 2 - box.left) / k - root.clientLeft;
+    var my = (r.top + r.height / 2 - box.top) / k - root.clientTop;
     var tw = tooltip.offsetWidth, th = tooltip.offsetHeight;
     var W = root.clientWidth, H = root.clientHeight;
 
