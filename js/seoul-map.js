@@ -41,7 +41,7 @@
   /* ---- 확대/이동 -------------------------------------------------------- */
   function z() { return ZOOMS[zi]; }
 
-  // 화면 축소 배율 (768~1439px에서 페이지 전체에 zoom이 걸린다, js/site/fit.js).
+  // 화면 축소 배율 (1024~1439px에서 페이지 전체에 zoom이 걸린다, js/site/fit.js).
   // 마우스 좌표·getBoundingClientRect는 축소된 값이라 CSS px로 되돌릴 때 나눈다.
   function pageZoom() {
     var w = root.offsetWidth;

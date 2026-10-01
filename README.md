@@ -39,14 +39,14 @@ css/
   cases.css    S4. 사례 갤러리
   team-banner.css  S5. 팀 소개 배너
   footer.css   S6. 푸터
-  mobile.css   767px 이하 모바일 배치 (모든 섹션, 이 파일 하나에만 있다)
+  mobile.css   1023px 이하 모바일 배치 (모든 섹션, 이 파일 하나에만 있다)
 js/
   seoul-map.js 지도 확대/축소·드래그, 마커 툴팁, 축척
   lib/moss/moss-engine.js  S3 도안 생성 엔진 (원본 번들 그대로, 수정 금지)
   configurator/app.js      S3 화면 ↔ 엔진 연결
   cases/            S4 (cases-data.js: 카드 데이터, cases.js: 렌더 + 캐러셀)
   site/             S5·S6 링크와 팀 사진 경로 (site-config.js) + 적용 스크립트,
-                    fit.js (768~1439px 화면 축소)
+                    fit.js (1024~1439px 화면 축소)
 assets/
   icons/       Hero 효과 카드 아이콘 (손그림, 투명 배경 원본)
   map/districts/  서울 25개 구 크레용 지도 (무손실 webp, 구별 레이어)
@@ -73,8 +73,8 @@ fonts/         웹폰트 파일 (Y Clover Bold, Y페어링체 Regular·Bold, Pre
 | 화면 폭 | 동작 | 위치 |
 |---|---|---|
 | 1440px 이상 | 데스크톱 화면 그대로 | 각 섹션 CSS |
-| 768~1439px | 1440 데스크톱 화면을 비율 그대로 축소 (`.page`에 `zoom`) | `js/site/fit.js`, `css/base.css` 끝 |
-| 767px 이하 | 모바일 배치 (한 줄 세로) | `css/mobile.css` |
+| 1024~1439px | 1440 데스크톱 화면을 비율 그대로 축소 (`.page`에 `zoom`) | `js/site/fit.js`, `css/base.css` 끝 |
+| 1023px 이하 (휴대폰, 세로 태블릿) | 모바일 배치 (한 줄 세로, 내용은 가운데 최대 640px 열) | `css/mobile.css` |
 
 모바일 배치:
 
@@ -82,10 +82,10 @@ fonts/         웹폰트 파일 (Y Clover Bold, Y페어링체 Regular·Bold, Pre
 - S1 지도는 패널 폭에 맞춰 줄어든다 (마커·구 위치는 % 좌표라 그대로). 확대 전에는 지도 위를 밀어도 페이지가 스크롤되고, 확대하면 드래그로 이동한다.
 - S3는 위에 세면대 도식(입력칸 자리에 번호 1~4), 아래에 같은 입력칸 4개를 번호·이름과 함께 세로 목록으로 둔다.
   입력칸·검증 문구·버튼은 데스크톱과 같은 요소이고 배치만 바뀐다. 틀린 칸은 입력칸과 도식 번호가 함께 주황이 된다.
-- S4 사례 갤러리는 한 화면에 1장 (`--cases-visible: 1`), S5 배너 문구는 사진 위쪽 빈 격자 자리, S6 푸터는 왼쪽 정렬.
+- S4 사례 갤러리는 한 화면에 1장, 600px 이상은 2장 (`--cases-visible`), S5 배너 문구는 사진 위쪽 빈 격자 자리, S6 푸터는 왼쪽 정렬.
 - 공통 간격은 섹션 사이 72px, 좌우 여백 16px.
 
-768~1439px 축소에서는 마우스 좌표와 `getBoundingClientRect`가 축소된 값이라,
+1024~1439px 축소에서는 마우스 좌표와 `getBoundingClientRect`가 축소된 값이라,
 지도(`seoul-map.js`)·갤러리(`cases.js`)·S3 칩 폭(`app.js`)은 CSS px로 되돌려 계산한다.
 
 ## 폰트
@@ -149,6 +149,7 @@ PC 설치 여부와 관계없이 같은 결과가 나온다. Pretendard Thin은 
 { image: 'assets/cases/파일명.webp', title: '기관명/장소', description: '짧은 설명', link: '' }
 ```
 
+- 지금 들어 있는 3개(햇살마루 종합사회복지관 등)는 화면 확인용 임의 예시다. 실제 사례로 교체한다.
 - `image`를 비우면 같은 크기의 회색 자리가 표시된다. 이미지는 카드 틀(224×175)에 맞춰 잘려 보인다(`object-fit: cover`).
 - `link`가 있으면 카드 전체가 링크가 된다. `alt`(선택)가 없으면 `title`을 대체 텍스트로 쓴다.
 - 한 화면에 3장이 보이고, 좌우 버튼으로 한 장씩 순환한다. 3장 미만이면 버튼이 숨겨진다.

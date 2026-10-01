@@ -50,7 +50,7 @@ function init(form) {
   };
 
   // 칩 폭(세로 칩은 높이)을 내용 길이에 맞춘다 — 러프 화면의 기존 동작
-  // (offsetWidth/Height: 768~1439px의 화면 축소(zoom)와 무관한 CSS px 값)
+  // (offsetWidth/Height: 1024~1439px의 화면 축소(zoom)와 무관한 CSS px 값)
   const ruler = document.createElement('span');
   ruler.setAttribute('aria-hidden', 'true');
   ruler.style.cssText = 'position:absolute;visibility:hidden;white-space:pre;left:-9999px;top:0';

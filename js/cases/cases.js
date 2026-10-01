@@ -66,7 +66,7 @@
   /* ---- 캐러셀 ---------------------------------------------------------- */
   var busy = false;
 
-  // 카드 한 칸 이동 거리 (offsetLeft: 768~1439px의 화면 축소(zoom)와 무관한 CSS px 값)
+  // 카드 한 칸 이동 거리 (offsetLeft: 1024~1439px의 화면 축소(zoom)와 무관한 CSS px 값)
   function step() {
     var cards = track.children;
     if (cards.length < 2) return 0;

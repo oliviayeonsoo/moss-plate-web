@@ -1,15 +1,17 @@
 /* ==========================================================================
-   모바일 (767px 이하) — 한 줄 세로 배치
-   데스크톱(1440) 화면은 각 섹션 CSS 그대로이고, 이 파일은 767px 이하에서만 덮어쓴다.
-   768~1439px는 데스크톱 화면을 비율 그대로 축소한다 (css/base.css, js/site/fit.js).
+   모바일 (1023px 이하: 휴대폰 + 세로 태블릿) — 한 줄 세로 배치
+   데스크톱(1440) 화면은 각 섹션 CSS 그대로이고, 이 파일은 1023px 이하에서만 덮어쓴다.
+   1024~1439px는 데스크톱 화면을 비율 그대로 축소한다 (css/base.css, js/site/fit.js).
+   넓은 화면(태블릿)에서도 내용은 가운데 최대 640px 열에 두고, 배경색만 끝까지 채운다.
    ========================================================================== */
 
-@media (max-width: 767px) {
+@media (max-width: 1023px) {
 
   :root {
     --section-gap: 72px;
     --content-pad-x: 16px;
     --banner-pad-x: 16px;
+    --mobile-col: 672px;                 /* 내용 열 640 + 좌우 여백 16 × 2 */
   }
 
   body { min-width: 0; }
@@ -17,6 +19,15 @@
   /* ---- 뼈대: Hero가 맨 위 첫 화면, 그 아래로 섹션이 이어진다 ------------- */
   .page { display: block; }
   .content { min-height: 0; }
+
+  /* 가운데 내용 열 (Hero 민트·푸터 회색 배경은 화면 끝까지) */
+  .hero__inner,
+  .content > section,
+  .site-footer__inner {
+    max-width: var(--mobile-col);
+    margin-left: auto;
+    margin-right: auto;
+  }
 
   /* ---- 섹션 공통 제목 ---------------------------------------------------- */
   .section-title {
@@ -333,7 +344,7 @@
     font-size: 12px;
   }
 
-  /* ==== S4. 사례 갤러리: 한 화면에 1장 ================================== */
+  /* ==== S4. 사례 갤러리: 한 화면에 1장 (600px 이상은 2장, 아래) ========= */
   .cases-section {
     --cases-visible: 1;
     --case-gap: 16px;
@@ -347,7 +358,10 @@
 
   .cases__viewport { width: calc(100% - var(--nav-room) * 2); }
 
-  .case-card { flex-basis: 100%; }
+  /* 카드 폭 = (보이는 폭 - 카드 사이 간격) / 장 수 */
+  .case-card {
+    flex-basis: calc((100% - var(--case-gap) * (var(--cases-visible) - 1)) / var(--cases-visible));
+  }
 
   .case-card__media {
     height: auto;
@@ -356,7 +370,10 @@
 
   .case-card__title { margin-top: 14px; }
 
-  .cases__nav { top: calc((100cqw - var(--nav-room) * 2) * 174.8 / 224.4 / 2); }
+  .cases__nav {
+    top: calc((100cqw - var(--nav-room) * 2 - var(--case-gap) * (var(--cases-visible) - 1))
+              / var(--cases-visible) * 174.8 / 224.4 / 2);
+  }
   .cases__nav--prev { left: 8px; }
   .cases__nav--next { right: 8px; }
 
@@ -383,4 +400,9 @@
     height: auto;
     padding: 32px var(--content-pad-x) 28px;
   }
+}
+
+/* 세로 태블릿처럼 넓은 모바일 화면: 사례 카드가 너무 커지지 않게 2장씩 */
+@media (min-width: 600px) and (max-width: 1023px) {
+  .cases-section { --cases-visible: 2; }
 }
