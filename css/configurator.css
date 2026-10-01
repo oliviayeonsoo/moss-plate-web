@@ -7,6 +7,9 @@
   padding: 0;
 }
 
+/* 제목 줄바꿈은 휴대폰 폭에서만 (css/mobile.css) */
+.br-phone { display: none; }
+
 .cfg-section .section-sub {
   margin-top: 3px;
   font-size: 16.3px;

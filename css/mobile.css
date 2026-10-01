@@ -406,3 +406,8 @@
 @media (min-width: 600px) and (max-width: 1023px) {
   .cases-section { --cases-visible: 2; }
 }
+
+/* 휴대폰 폭: S3 제목을 "내 세면대에 꼭 맞는 / 이끼 플레이트를 만들어 볼까요?" 두 줄로 */
+@media (max-width: 599px) {
+  .br-phone { display: inline; }
+}
